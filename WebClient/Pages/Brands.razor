@@ -1,0 +1,93 @@
+﻿@page "/brands"
+@inject HttpClient Http
+
+<h1>Бренды</h1>
+
+@if (brands == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Brand name</th>
+            <th>Vehicle type</th>
+            <th>Tank, l</th>
+            <th>Load capacity, kg</th>
+            <th>Number of seats</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var brand in brands)
+        {
+            <tr @key="@brand.Id">
+                <td>@brand.Name</td>
+                <td>@brand.VehicleType</td>
+                <td>@brand.Tank</td>
+                <td>@brand.LoadCapacity</td>
+                <td>@brand.NumberOfSeats</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@code {
+    private BrandDto[] brands;
+
+    protected override async Task OnInitializedAsync()
+    {
+        brands = await Http.GetFromJsonAsync<BrandDto[]>("vehicle/brand");
+    }
+
+    public class BrandDto
+    {
+        public Guid Id { get; set; }
+        
+        /// <summary>
+    /// Название бренда
+    /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+    /// Тип транспортного средства
+    /// </summary>
+        public VehicleType VehicleType { get; set; }
+        
+        /// <summary>
+    /// Бак
+    /// </summary>
+        public int Tank { get; set; }
+
+        /// <summary>
+    /// Грузоподъемность
+    /// </summary>
+        public int LoadCapacity { get; set; }
+        
+        /// <summary>
+    /// Количество посадочных мест
+    /// </summary>
+        public int NumberOfSeats { get; set; }
+    }
+    
+    public enum VehicleType
+    {
+        /// <summary>
+    /// Легковой автомобиль
+    /// </summary>
+        Car = 1,
+        /// <summary>
+    /// Грузовой автомобиль
+    /// </summary>
+        Truck = 2,
+        
+        /// <summary>
+    /// Автобус
+    /// </summary>
+        Bus = 3
+    }
+}

@@ -1,5 +1,6 @@
 ﻿using System;
 using BaseTypes;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Vehicle.Contract.Enums;
 
 namespace AutoPark.Svc.Infrastructure.Entities
@@ -29,11 +30,21 @@ namespace AutoPark.Svc.Infrastructure.Entities
         /// </summary>
         public string Color { get; set; }
 
+        public Guid BrandId { get; set; }
+
+        /// <summary>
+        /// Бренд
+        /// </summary>
+        public Brand Brand { get; set; }
+
         /// <summary>
         /// Состояние транспортного средства
         /// </summary>
         public VehicleState VehicleState { get; set; }
         
+        /// <summary>
+        /// Тип трансмиссии
+        /// </summary>
         public Transmission Transmission { get; set; }
     }
 }

@@ -12,7 +12,13 @@ namespace Vehicle.Contract
         /// <summary>
         /// Получить все транспопртные средства
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Список транспортных средств</returns>
         Task<List<VehicleDto>> GetVehicles();
+
+        /// <summary>
+        /// Получить все бренды
+        /// </summary>
+        /// <returns>Список брендов</returns>
+        Task<List<BrandDto>> GetBrands();
     }
 }

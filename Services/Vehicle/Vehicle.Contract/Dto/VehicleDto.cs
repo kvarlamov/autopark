@@ -1,9 +1,10 @@
 ﻿using System;
+using BaseTypes;
 using Vehicle.Contract.Enums;
 
 namespace Vehicle.Contract.Dto
 {
-    public class VehicleDto
+    public class VehicleDto : BaseDto
     {
         /// <summary>
         /// Стоимость транспортного средства
@@ -31,5 +32,8 @@ namespace Vehicle.Contract.Dto
         public VehicleState VehicleState { get; set; }
 
         public Transmission Transmission { get; set; }
+        
+        public string BrandName { get; set; }
+        public Guid BrandId { get; set; }
     }
 }

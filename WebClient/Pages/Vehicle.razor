@@ -1,4 +1,4 @@
-﻿@page "/vehicle"
+﻿@page "/vehicles"
 @inject HttpClient Http
 
 <h1>Транспортные средства</h1>
@@ -20,18 +20,21 @@ else
             <th>Milleage, km</th>
             <th>Transmision</th>
             <th>State</th>
+            <th>Brand Name</th>
         </tr>
         </thead>
         <tbody>
         @foreach (var vehicle in vehicles)
         {
-            <tr>
+            <tr @key="@vehicle.Id">
                 <td>@vehicle.ManufactureYear</td>
                 <td>@vehicle.Cost</td>
                 <td>@vehicle.Color</td>
                 <td>@vehicle.Mileage</td>
                 <td>@vehicle.Transmission</td>
                 <td>@vehicle.VehicleState</td>
+                <td>@vehicle.BrandName</td>
+                <td style="display: none">@vehicle.BrandId</td>
             </tr>
         }
         </tbody>
@@ -48,6 +51,8 @@ else
 
     public class VehicleDto
     {
+        public Guid Id { get; set; }
+        
         /// <summary>
         /// Стоимость транспортного средства
         /// </summary>
@@ -74,17 +79,20 @@ else
         public VehicleState VehicleState { get; set; }
 
         public Transmission Transmission { get; set; }
+        
+        public string BrandName { get; set; }
+        public Guid BrandId { get; set; }
     }
     
     public enum Transmission
     {
-        Manual,
-        Automatic
+        Manual = 1,
+        Automatic = 2
     }
 
     public enum VehicleState
     {
-        Normal,
-        NeedsRepair
+        Normal = 1,
+        NeedsRepair = 2
     }
 }

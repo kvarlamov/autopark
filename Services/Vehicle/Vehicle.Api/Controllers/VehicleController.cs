@@ -27,5 +27,11 @@ namespace AutoPark.Api.Controllers
         {
             return await _vehicleService.GetVehicles();
         }
+
+        [HttpGet("brand")]
+        public async Task<List<BrandDto>> GetBrands()
+        {
+            return await _vehicleService.GetBrands();
+        }
     }
 }

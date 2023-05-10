@@ -8,11 +8,11 @@
         /// <summary>
         /// На ходу
         /// </summary>
-        Normal,
+        Normal = 1,
         
         /// <summary>
         /// Требует ремонта
         /// </summary>
-        NeedsRepair
+        NeedsRepair = 2
     }
 }
