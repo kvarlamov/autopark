@@ -30,12 +30,12 @@ namespace AutoPark.Svc.Infrastructure.Entities
         /// </summary>
         public string Color { get; set; }
 
-        public Guid BrandId { get; set; }
+        public Guid? BrandId { get; set; }
 
         /// <summary>
         /// Бренд
         /// </summary>
-        public Brand Brand { get; set; }
+        public Brand? Brand { get; set; }
 
         /// <summary>
         /// Состояние транспортного средства

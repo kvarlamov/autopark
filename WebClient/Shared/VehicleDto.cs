@@ -1,11 +1,11 @@
 ﻿using System;
-using BaseTypes;
-using Vehicle.Contract.Enums;
 
-namespace Vehicle.Contract.Dto
+namespace WebClient.Shared
 {
-    public class VehicleDto : BaseDto
+    public class VehicleDto
     {
+        public Guid Id { get; set; }
+        
         /// <summary>
         /// Стоимость транспортного средства
         /// </summary>
@@ -35,5 +35,17 @@ namespace Vehicle.Contract.Dto
         
         public string BrandName { get; set; }
         public Guid? BrandId { get; set; }
+    }
+    
+    public enum Transmission
+    {
+        Manual = 1,
+        Automatic = 2
+    }
+
+    public enum VehicleState
+    {
+        Normal = 1,
+        NeedsRepair = 2
     }
 }

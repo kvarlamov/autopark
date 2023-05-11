@@ -1,0 +1,84 @@
+﻿@page "/vehicle/{id:guid}"
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JsRuntime
+
+<EditForm Model="@vehicle" OnSubmit="Save">
+    <p>
+        Manufacture Year:<br/>
+        <InputNumber id="year" @bind-Value="@vehicle.ManufactureYear"/>
+    </p>
+    <p>
+        Cost:<br/>
+        <InputNumber id="cost" @bind-Value="@vehicle.Cost"/>
+    </p>
+    <p>
+        Color:<br/>
+        <InputText id="color" @bind-Value="@vehicle.Color"/>
+    </p>
+    <p>
+        Mileage:<br/>
+        <InputNumber id="mileage" @bind-Value="@vehicle.Mileage"/>
+    </p>
+    <p>
+        Transmission:<br/>
+        <InputSelect @bind-Value="@vehicle.Transmission">
+            @foreach (var value in Enum.GetValues(typeof(Transmission)))
+            {
+                <option value="@value">@value.ToString()</option>
+            }
+        </InputSelect>
+    </p>
+    <p>
+        VehicleState:<br/>
+        <InputSelect @bind-Value="@vehicle.VehicleState">
+            @foreach (var value in Enum.GetValues(typeof(VehicleState)))
+            {
+                <option value="@value">@value.ToString()</option>
+            }
+        </InputSelect>
+    </p>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <button type="submit">Submit</button>
+                <input type="button" class="btn" @onclick="@Cancel" value="Cancel" />
+            </div>
+        </div>
+    </div>
+    
+</EditForm>
+ 
+@code {
+    [Parameter]
+    public Guid? Id { get; set; }
+    
+    VehicleDto vehicle = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id != Guid.Empty)
+            vehicle = await Http.GetFromJsonAsync<VehicleDto>("vehicle/" + Id);
+        else
+            vehicle = new();
+    }
+
+    private async Task Save()
+    {
+        HttpResponseMessage response;
+        if (Id != Guid.Empty)
+            response = await Http.PutAsJsonAsync("vehicle", vehicle);
+        else
+            response = await Http.PostAsJsonAsync("vehicle", vehicle);
+        
+        if (response.IsSuccessStatusCode)
+        {
+            await JsRuntime.InvokeVoidAsync("alert", "Updated Successfully!");
+            NavigationManager.NavigateTo("vehicle");
+        }
+    }
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("vehicle");
+    }
+}

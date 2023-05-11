@@ -1,0 +1,74 @@
+﻿@page "/vehicle"
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JsRuntime
+
+<h1>Транспортные средства</h1>
+
+@if (vehicles == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Year of manufacture</th>
+            <th>Cost, $</th>
+            <th>Color</th>
+            <th>Milleage, km</th>
+            <th>Transmision</th>
+            <th>State</th>
+            <th>Brand Name</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var vehicle in vehicles)
+        {
+            <tr @key="@vehicle.Id" @onclick="() => NavigateToVehicle(vehicle.Id)">
+                <td>@vehicle.ManufactureYear</td>
+                <td>@vehicle.Cost</td>
+                <td>@vehicle.Color</td>
+                <td>@vehicle.Mileage</td>
+                <td>@vehicle.Transmission</td>
+                <td>@vehicle.VehicleState</td>
+                <td>@vehicle.BrandName</td>
+                <td style="display: none">@vehicle.BrandId</td>
+                <td><button @onclick="() => Remove(vehicle.Id)" @onclick:stopPropagation="true">REMOVE</button></td>
+            </tr>
+        }
+        </tbody>
+    </table>
+    <button @onclick="() => NavigateToVehicle(Guid.Empty)" @onclick:stopPropagation="true">Create New</button>
+}
+
+@code {
+    private List<VehicleDto> vehicles;
+
+    protected override async Task OnInitializedAsync()
+    {
+        vehicles = new List<VehicleDto>();
+        vehicles = (await Http.GetFromJsonAsync<VehicleDto[]>("vehicle")).ToList();
+    }
+    private void NavigateToVehicle(Guid? id)
+    {
+        NavigationManager.NavigateTo($"/vehicle/{id}");
+    }
+
+    private async Task Remove(Guid id)
+    {
+        var response = await Http.DeleteAsync("vehicle/" + id);
+        // bool deleteResponse = await response.Content.ReadFromJsonAsync<bool>();
+        if (response.IsSuccessStatusCode)
+        {
+            await JsRuntime.InvokeVoidAsync("alert", "Deleted Successfully!");
+            vehicles = (await Http.GetFromJsonAsync<VehicleDto[]>("vehicle")).ToList();
+        }
+        
+        NavigationManager.NavigateTo("vehicle");
+    }
+
+}

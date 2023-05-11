@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -26,6 +27,36 @@ namespace AutoPark.Api.Controllers
         public async Task<List<VehicleDto>> Get()
         {
             return await _vehicleService.GetVehicles();
+        }
+        
+        [HttpGet("{id:guid}")]
+        public async Task<VehicleDto> Get(Guid id)
+        {
+            return await _vehicleService.GetVehicle(id);
+        }
+
+        [HttpPost]
+        public async Task<VehicleDto> CreateAsync([FromBody] VehicleDto dto)
+        {
+            var res = await _vehicleService.CreateAsync(dto);
+
+            return res;
+        }
+        
+        [HttpPut]
+        public async Task<VehicleDto> UpdateAsync([FromBody] VehicleDto dto)
+        {
+            var res = await _vehicleService.UpdateAsync(dto);
+
+            return res;
+        }
+        
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteAsync(Guid id)
+        {
+            var res = await _vehicleService.DeleteAsync(id);
+
+            return Ok();
         }
 
         [HttpGet("brand")]
