@@ -2,7 +2,7 @@
 
 namespace BaseTypes
 {
-    public class BaseDto
+    public class BaseEntity
     {
         public long Id { get; set; }
     }

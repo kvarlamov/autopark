@@ -16,13 +16,13 @@ namespace Vehicle.Contract
         /// <returns>Список транспортных средств</returns>
         Task<List<VehicleDto>> GetVehicles();
         
-        Task<VehicleDto> GetVehicle(Guid id);
+        Task<VehicleDto> GetVehicle(long id);
 
         Task<VehicleDto> CreateAsync(VehicleDto dto);
 
         Task<VehicleDto> UpdateAsync(VehicleDto dto);
 
-        Task<bool> DeleteAsync(Guid id);
+        Task<bool> DeleteAsync(long id);
 
         /// <summary>
         /// Получить все бренды

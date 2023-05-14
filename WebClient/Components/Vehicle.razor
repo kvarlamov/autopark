@@ -1,4 +1,4 @@
-﻿@page "/vehicle/{id:guid}"
+﻿@page "/vehicle/{id:long}"
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JsRuntime
@@ -21,6 +21,15 @@
         <InputNumber id="mileage" @bind-Value="@vehicle.Mileage"/>
     </p>
     <p>
+        Brand:<br/>
+        <InputSelect name="BrandId" @bind-Value="@vehicle.BrandId">
+            @foreach (var brand in brands)
+            {
+                <option value="@brand.Id">@brand.Name</option>
+            }
+        </InputSelect>
+    </p>
+    <p>
         Transmission:<br/>
         <InputSelect @bind-Value="@vehicle.Transmission">
             @foreach (var value in Enum.GetValues(typeof(Transmission)))
@@ -30,7 +39,7 @@
         </InputSelect>
     </p>
     <p>
-        VehicleState:<br/>
+        Vehicle State:<br/>
         <InputSelect @bind-Value="@vehicle.VehicleState">
             @foreach (var value in Enum.GetValues(typeof(VehicleState)))
             {
@@ -51,22 +60,27 @@
  
 @code {
     [Parameter]
-    public Guid? Id { get; set; }
+    public long? Id { get; set; }
     
     VehicleDto vehicle = new();
 
+    List<BrandSimpleDto> brands = new();
+
     protected override async Task OnInitializedAsync()
     {
-        if (Id != Guid.Empty)
+        if (Id != 0)
             vehicle = await Http.GetFromJsonAsync<VehicleDto>("vehicle/" + Id);
-        else
-            vehicle = new();
+        
+        brands = await Http.GetFromJsonAsync<List<BrandSimpleDto>>("vehicle/brand");
     }
 
     private async Task Save()
     {
         HttpResponseMessage response;
-        if (Id != Guid.Empty)
+        if (vehicle.BrandId == 0)
+            vehicle.BrandId = brands.FirstOrDefault()?.Id ?? 0;
+        
+        if (Id != 0)
             response = await Http.PutAsJsonAsync("vehicle", vehicle);
         else
             response = await Http.PostAsJsonAsync("vehicle", vehicle);

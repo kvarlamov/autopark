@@ -34,6 +34,6 @@ namespace Vehicle.Contract.Dto
         public Transmission Transmission { get; set; }
         
         public string BrandName { get; set; }
-        public Guid? BrandId { get; set; }
+        public long BrandId { get; set; }
     }
 }

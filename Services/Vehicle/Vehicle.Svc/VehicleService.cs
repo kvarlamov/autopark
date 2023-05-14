@@ -40,7 +40,7 @@ namespace AutoPark.Svc
             return vehicleDtos;
         }
 
-        public async Task<VehicleDto> GetVehicle(Guid id)
+        public async Task<VehicleDto> GetVehicle(long id)
         {
             //todo - add everywhere compiledquery
             var entity = await _db.Vehicles.Include(v => v.Brand).AsNoTracking().FirstOrDefaultAsync(v => v.Id == id);
@@ -55,6 +55,9 @@ namespace AutoPark.Svc
             //todo  - при создании продумать обработку бренда - создавать новый или выбирать из имеющихся
             var newEntity = MapVehicleDtoToEntity(dto);
 
+            if (dto.BrandId == 0)
+                throw new ArgumentException("Brand id cant be 0");
+            
             var brand = await _db.Brands.FirstOrDefaultAsync(brand => brand.Id == dto.BrandId);
             if (brand != null)
                 newEntity.Brand = brand;
@@ -83,7 +86,7 @@ namespace AutoPark.Svc
             return MapVehicleEntityToDto(newEntity);
         }
 
-        public async Task<bool> DeleteAsync(Guid id)
+        public async Task<bool> DeleteAsync(long id)
         {
             var existed = await _db.Vehicles.FirstOrDefaultAsync(vehicle => vehicle.Id == id);
             if (existed is null)
@@ -128,8 +131,8 @@ namespace AutoPark.Svc
                 Mileage = vehicle.Mileage,
                 ManufactureYear = vehicle.ManufactureYear,
                 Transmission = vehicle.Transmission,
-                BrandName = vehicle.Brand?.Name,
-                BrandId = vehicle.Brand?.Id
+                BrandName = vehicle.Brand.Name,
+                BrandId = vehicle.Brand.Id
             };
 
         private Infrastructure.Entities.Vehicle MapVehicleDtoToEntity(VehicleDto dto) =>

@@ -8,7 +8,7 @@ namespace AutoPark.Svc.Infrastructure.Entities
     /// <summary>
     /// Бренд
     /// </summary>
-    public class Brand : BaseModel
+    public class Brand : BaseEntity
     {
         /// <summary>
         /// Количество мест

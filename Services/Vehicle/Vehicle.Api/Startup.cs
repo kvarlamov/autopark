@@ -81,8 +81,9 @@ namespace AutoPark.Api
                 var context = services.GetRequiredService<VehicleContext>();
                 VehicleInitializer.Initialize(context);
             }
-            catch
+            catch(Exception e)
             {
+                Console.WriteLine(e.Message);
             }
         }
     }

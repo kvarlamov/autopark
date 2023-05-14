@@ -29,8 +29,8 @@ namespace AutoPark.Api.Controllers
             return await _vehicleService.GetVehicles();
         }
         
-        [HttpGet("{id:guid}")]
-        public async Task<VehicleDto> Get(Guid id)
+        [HttpGet("{id:long}")]
+        public async Task<VehicleDto> Get(long id)
         {
             return await _vehicleService.GetVehicle(id);
         }
@@ -52,7 +52,7 @@ namespace AutoPark.Api.Controllers
         }
         
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteAsync(Guid id)
+        public async Task<ActionResult> DeleteAsync(long id)
         {
             var res = await _vehicleService.DeleteAsync(id);
 

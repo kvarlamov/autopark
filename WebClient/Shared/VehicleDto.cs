@@ -4,7 +4,7 @@ namespace WebClient.Shared
 {
     public class VehicleDto
     {
-        public Guid Id { get; set; }
+        public long Id { get; set; }
         
         /// <summary>
         /// Стоимость транспортного средства
@@ -34,7 +34,7 @@ namespace WebClient.Shared
         public Transmission Transmission { get; set; }
         
         public string BrandName { get; set; }
-        public Guid? BrandId { get; set; }
+        public long BrandId { get; set; }
     }
     
     public enum Transmission

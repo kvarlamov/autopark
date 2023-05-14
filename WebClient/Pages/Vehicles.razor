@@ -42,7 +42,7 @@ else
         }
         </tbody>
     </table>
-    <button @onclick="() => NavigateToVehicle(Guid.Empty)" @onclick:stopPropagation="true">Create New</button>
+    <button @onclick="() => NavigateToVehicle(0)" @onclick:stopPropagation="true">Create New</button>
 }
 
 @code {
@@ -53,12 +53,12 @@ else
         vehicles = new List<VehicleDto>();
         vehicles = (await Http.GetFromJsonAsync<VehicleDto[]>("vehicle")).ToList();
     }
-    private void NavigateToVehicle(Guid? id)
+    private void NavigateToVehicle(long? id)
     {
         NavigationManager.NavigateTo($"/vehicle/{id}");
     }
 
-    private async Task Remove(Guid id)
+    private async Task Remove(long id)
     {
         var response = await Http.DeleteAsync("vehicle/" + id);
         // bool deleteResponse = await response.Content.ReadFromJsonAsync<bool>();
