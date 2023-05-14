@@ -17,10 +17,8 @@ namespace AutoPark.Svc.Infrastructure.Entities
         public long EnterpriseId { get; set; }
 
         public Enterprise Enterprise { get; set; }
-
-        public long VehicleId { get; set; }
         
-        public List<Vehicle>  Vehicle { get; set; }
+        public List<Vehicle>  Vehicles { get; set; }
 
         // could be actie for one car
         public bool IsActive { get; set; }

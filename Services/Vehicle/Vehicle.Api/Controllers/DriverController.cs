@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Driver.Contract;
 using Driver.Contract.Dto;
 using Microsoft.AspNetCore.Mvc;
@@ -23,7 +24,7 @@ namespace AutoPark.Api.Controllers
         }
         
         [HttpGet]
-        public async Task<DriverDto> GetDriversAsync()
+        public async Task<List<DriverDto>> GetDriversAsync()
         {
             return await _driverService.GetDriversAsync();
         }

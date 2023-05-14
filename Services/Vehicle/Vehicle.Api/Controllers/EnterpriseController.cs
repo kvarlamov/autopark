@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Enterprise.Contract.Dto;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -21,8 +22,8 @@ namespace AutoPark.Api.Controllers
             _logger = logger;
         }
         
-        
-        public async Task<EnterpriseDto> Index()
+        [HttpGet]
+        public async Task<List<EnterpriseDto>> Index()
         {
             return await _enterpriseService.GetEnterprisesAsync();
         }

@@ -18,11 +18,9 @@ namespace Driver.Contract.Dto
 
         public long EnterpriseId { get; set; }
 
-        public EnterpriseDto Enterprise { get; set; }
-
         public long VehicleId { get; set; }
         
-        public List<VehicleDto>  Vehicle { get; set; }
+        public List<long>  Vehicles { get; set; }
 
         // could be actie for one car
         public bool IsActive { get; set; }

@@ -1,10 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Enterprise.Contract.Dto;
 
 namespace Vehicle.Contract
 {
     public interface IEnterpriseService
     {
-        Task<EnterpriseDto> GetEnterprisesAsync();
+        Task<List<EnterpriseDto>> GetEnterprisesAsync();
     }
 }

@@ -15,8 +15,8 @@ namespace Enterprise.Contract.Dto
 
         public int NumberOfStaff { get; set; }
 
-        public List<VehicleDto> Vehicles { get; set; }
+        public List<long> Vehicles { get; set; }
 
-        public List<DriverDto> Drivers { get; set; }
+        public List<long> Drivers { get; set; }
     }
 }

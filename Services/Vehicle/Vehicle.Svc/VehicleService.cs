@@ -121,7 +121,7 @@ namespace AutoPark.Svc
             return brandDtos;
         }
         
-        private VehicleDto MapVehicleEntityToDto(Infrastructure.Entities.Vehicle vehicle) =>
+        private static VehicleDto MapVehicleEntityToDto(Infrastructure.Entities.Vehicle vehicle) =>
             new()
             {
                 Id = vehicle.Id,
