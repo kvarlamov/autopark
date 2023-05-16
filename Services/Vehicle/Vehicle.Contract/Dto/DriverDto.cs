@@ -22,7 +22,7 @@ namespace Driver.Contract.Dto
         
         public List<long>  Vehicles { get; set; }
 
-        // could be actie for one car
+        // could be active for only one car
         public bool IsActive { get; set; }
     }
 }

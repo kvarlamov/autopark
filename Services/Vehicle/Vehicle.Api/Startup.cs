@@ -2,6 +2,7 @@ using System;
 using AutoPark.Svc;
 using AutoPark.Svc.Infrastructure;
 using AutoPark.Svc.Infrastructure.TestData;
+using Driver.Contract;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -31,9 +32,12 @@ namespace AutoPark.Api
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "Vehicle.Api", Version = "v1"});
             });
 
-            services.AddDbContext<VehicleContext>(options => options.UseSqlite("FileName=TestDb"));
+            services.AddDbContext<VehicleContext>(options => options.UseNpgsql(Configuration.GetConnectionString("AutoParkDB")));
 
             services.AddScoped<IVehicleService, VehicleService>();
+            services.AddScoped<IEnterpriseService, EnterpriseService>();
+            services.AddScoped<IDriverService, DriverService>();
+            
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowBlazorClient",

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using BaseTypes;
-using Microsoft.Extensions.DependencyModel;
 using Vehicle.Contract.Enums;
 
 namespace AutoPark.Svc.Infrastructure.Entities

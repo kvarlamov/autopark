@@ -2,12 +2,9 @@
 using System.Linq;
 using System.Threading.Tasks;
 using AutoPark.Svc.Infrastructure;
-using Driver.Contract.Dto;
 using Enterprise.Contract.Dto;
 using Microsoft.EntityFrameworkCore;
 using Vehicle.Contract;
-using Vehicle.Contract.Dto;
-using Enterprise = AutoPark.Svc.Infrastructure.Entities.Enterprise;
 
 namespace AutoPark.Svc
 {

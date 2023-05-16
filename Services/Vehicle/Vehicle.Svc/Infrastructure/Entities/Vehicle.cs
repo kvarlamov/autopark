@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using BaseTypes;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Vehicle.Contract.Enums;
 
 namespace AutoPark.Svc.Infrastructure.Entities
@@ -54,6 +52,6 @@ namespace AutoPark.Svc.Infrastructure.Entities
         /// <summary>
         /// Active driver for current vehicle
         /// </summary>
-        public Driver ActiveDriver { get; set; }
+        public Driver? ActiveDriver { get; set; }
     }
 }

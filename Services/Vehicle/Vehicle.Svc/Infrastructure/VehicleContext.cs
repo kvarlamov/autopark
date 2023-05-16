@@ -16,10 +16,22 @@ namespace AutoPark.Svc.Infrastructure
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            //todo - add Indexes for columns
+            
             modelBuilder.Entity<AutoPark.Svc.Infrastructure.Entities.Brand>()
                 .HasMany(b => b.Vehicles)
                 .WithOne(v => v.Brand)
                 .HasForeignKey(v => v.BrandId);
+
+            modelBuilder.Entity<Entities.Vehicle>()
+                .HasOne(v => v.ActiveDriver)
+                .WithOne(d => d.OnVehicle)
+                .HasForeignKey<Entities.Driver>(d => d.OnVehicleId);
+
+            modelBuilder.Entity<Entities.Vehicle>()
+                .HasMany(v => v.Drivers)
+                .WithMany(d => d.Vehicles)
+                .UsingEntity(j => j.ToTable("Vehicles_Drivers"));
             
             base.OnModelCreating(modelBuilder);
         }

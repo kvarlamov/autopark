@@ -4,10 +4,7 @@ using System.Threading.Tasks;
 using AutoPark.Svc.Infrastructure;
 using Driver.Contract;
 using Driver.Contract.Dto;
-using Enterprise.Contract.Dto;
 using Microsoft.EntityFrameworkCore;
-using Vehicle.Contract.Dto;
-using Driver = AutoPark.Svc.Infrastructure.Entities.Driver;
 
 namespace AutoPark.Svc
 {

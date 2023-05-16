@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoPark.Svc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Vehicle.Contract;
 using Vehicle.Contract.Dto;
-using Vehicle.Contract.Enums;
-using Vehicle = AutoPark.Svc.Infrastructure.Entities.Vehicle;
 
 namespace AutoPark.Svc
 {

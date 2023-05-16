@@ -13,7 +13,7 @@ namespace AutoPark.Svc.Infrastructure.TestData
             db.EnsureDeleted();
             db.EnsureCreated();
 
-            Brand mersedes = new Brand()
+            Brand mersedes = new Brand
             {
                 Name = "Mersedes-Benz",
                 Tank = 400,
@@ -22,7 +22,7 @@ namespace AutoPark.Svc.Infrastructure.TestData
                 NumberOfSeats = 50
             };
             
-            Brand kamaz = new Brand()
+            Brand kamaz = new Brand
             {
                 Name = "Kamaz",
                 Tank = 300,
@@ -31,7 +31,7 @@ namespace AutoPark.Svc.Infrastructure.TestData
                 NumberOfSeats = 3
             };
             
-            Brand mazda = new Brand()
+            Brand mazda = new Brand
             {
                 Name = "Mazda",
                 Tank = 50,
@@ -40,9 +40,9 @@ namespace AutoPark.Svc.Infrastructure.TestData
                 NumberOfSeats = 5
             };
             
-            _db.AddRange(mersedes, kamaz, mazda);
+            // _db.AddRange(mersedes, kamaz, mazda);
 
-            var vehicle1 = new Entities.Vehicle()
+            var vehicle1 = new Entities.Vehicle
             {
                 Color = "Black",
                 Cost = 90000,
@@ -53,7 +53,7 @@ namespace AutoPark.Svc.Infrastructure.TestData
                 Brand = mersedes
             };
 
-            var vehicle2 = new Entities.Vehicle()
+            var vehicle2 = new Entities.Vehicle
             {
                 Color = "Black",
                 Cost = 20000,
@@ -64,7 +64,7 @@ namespace AutoPark.Svc.Infrastructure.TestData
                 Brand = kamaz
             };
 
-            var vehicle3 = new Entities.Vehicle()
+            var vehicle3 = new Entities.Vehicle
             {
                 Color = "White",
                 Cost = 30000,
@@ -74,8 +74,76 @@ namespace AutoPark.Svc.Infrastructure.TestData
                 Transmission = Transmission.Automatic,
                 Brand = mazda
             };
-        
-            _db.Vehicles.AddRange(vehicle1, vehicle2, vehicle3);
+            
+            var vehicle4 = new Entities.Vehicle
+            {
+                Color = "Red",
+                Cost = 35000,
+                VehicleState = VehicleState.Normal,
+                Mileage = 10000,
+                ManufactureYear = 2021,
+                Transmission = Transmission.Automatic,
+                Brand = mazda
+            };
+            // _db.Vehicles.AddRange(vehicle1, vehicle2, vehicle3);
+
+            var driver1 = new Entities.Driver
+            {
+                Name = "Ivan Petrov",
+                Age = 45,
+                Salary = 50000
+            };
+            driver1.Vehicles = new List<Entities.Vehicle> {vehicle1, vehicle2};
+            vehicle1.ActiveDriver = driver1;
+
+            var driver2 = new Entities.Driver
+            {
+                Name = "Oleg Sidorov",
+                Age = 40,
+                Salary = 55000
+            };
+            driver2.Vehicles = new List<Entities.Vehicle> {vehicle1, vehicle2};
+            
+            var driver3 = new Entities.Driver
+            {
+                Name = "Semen Sidorov",
+                Age = 46,
+                Salary = 56000
+            };
+            driver3.Vehicles = new List<Entities.Vehicle> {vehicle3};
+
+            // with cars and drivers
+            var enterprise1 = new Entities.Enterprise
+            {
+                Name = "Stroy Invest",
+                City = "Kaliningrad",
+                Code = 112005,
+                NumberOfStaff = 1_000
+            };
+            enterprise1.Vehicles = new List<Entities.Vehicle> { vehicle1, vehicle2 };
+            enterprise1.Drivers = new List<Entities.Driver> { driver1, driver2 };
+            
+            // with cars and drivers
+            var enterprise2 = new Entities.Enterprise
+            {
+                Name = "Garaj Rent",
+                City = "Moskow",
+                Code = 715105,
+                NumberOfStaff = 10_000
+            };
+            enterprise2.Vehicles = new List<Entities.Vehicle> {vehicle3};
+            enterprise2.Drivers = new List<Entities.Driver> {driver3};
+            
+            // with cars but without drivers
+            var enterprise3 = new Entities.Enterprise
+            {
+                Name = "Arenda avto",
+                City = "Novgorod",
+                Code = 377005,
+                NumberOfStaff = 500
+            };
+            enterprise3.Vehicles = new List<Entities.Vehicle> {vehicle4};
+            _db.Enterprises.AddRange(enterprise1, enterprise2, enterprise3);
 
             _db.SaveChanges();
         }
