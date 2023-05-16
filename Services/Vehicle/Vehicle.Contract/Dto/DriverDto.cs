@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 using BaseTypes;
-using Enterprise.Contract.Dto;
-using Vehicle.Contract.Dto;
 
 namespace Driver.Contract.Dto
 {
@@ -16,13 +14,10 @@ namespace Driver.Contract.Dto
 
         public decimal Salary { get; set; }
 
-        public long EnterpriseId { get; set; }
-
-        public long VehicleId { get; set; }
+        public long Enterprise { get; set; }
         
         public List<long>  Vehicles { get; set; }
 
-        // could be active for only one car
-        public bool IsActive { get; set; }
+        public long? OnVehicle { get; set; }
     }
 }

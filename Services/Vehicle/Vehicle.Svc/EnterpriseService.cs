@@ -19,7 +19,10 @@ namespace AutoPark.Svc
         
         public async Task<List<EnterpriseDto>> GetEnterprisesAsync()
         {
-            var enterprises = await _db.Enterprises.ToListAsync();
+            var enterprises = await _db.Enterprises
+                .Include(e => e.Drivers)
+                .Include(e => e.Vehicles)
+                .ToListAsync();
 
             var result = new List<EnterpriseDto>();
 
@@ -47,6 +50,7 @@ namespace AutoPark.Svc
 
             return new EnterpriseDto()
             {
+                Id = enterprise.Id,
                 City = enterprise.City,
                 Name = enterprise.Name,
                 Code = enterprise.Code,

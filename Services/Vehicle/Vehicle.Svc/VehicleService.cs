@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoPark.Svc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -22,7 +23,11 @@ namespace AutoPark.Svc
         
         public async Task<List<VehicleDto>> GetVehicles()
         {
-            var vehicles = await _db.Vehicles.Include(v => v.Brand)
+            var vehicles = await _db.Vehicles
+                .Include(v => v.Brand)
+                .Include(v => v.ActiveDriver)
+                // .Include(v => v.Enterprise) // dont need to include because have long property
+                .Include(v => v.Drivers)
                 .AsNoTracking()
                 .ToListAsync();
             
@@ -118,8 +123,13 @@ namespace AutoPark.Svc
             return brandDtos;
         }
         
-        private static VehicleDto MapVehicleEntityToDto(Infrastructure.Entities.Vehicle vehicle) =>
-            new()
+        private static VehicleDto MapVehicleEntityToDto(Infrastructure.Entities.Vehicle vehicle)
+        {
+            List<long> drivers = new List<long>();
+            if (vehicle.Drivers is {Count: > 0})
+                drivers.AddRange(vehicle.Drivers.Select(x => x.Id));
+
+            return new VehicleDto
             {
                 Id = vehicle.Id,
                 Color = vehicle.Color,
@@ -129,8 +139,12 @@ namespace AutoPark.Svc
                 ManufactureYear = vehicle.ManufactureYear,
                 Transmission = vehicle.Transmission,
                 BrandName = vehicle.Brand.Name,
-                BrandId = vehicle.Brand.Id
+                BrandId = vehicle.Brand.Id,
+                ActiveDriver = vehicle.ActiveDriver?.Id,
+                Drivers = drivers,
+                Enterprise = vehicle.EnterpriseId
             };
+        }
 
         private Infrastructure.Entities.Vehicle MapVehicleDtoToEntity(VehicleDto dto) =>
             new()

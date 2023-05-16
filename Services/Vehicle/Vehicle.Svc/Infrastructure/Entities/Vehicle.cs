@@ -47,10 +47,10 @@ namespace AutoPark.Svc.Infrastructure.Entities
 
         public Enterprise Enterprise { get; set; }
 
-        public List<Driver> Drivers { get; set; }
+        public List<Driver> Drivers { get; set; } = new();
         
         /// <summary>
-        /// Active driver for current vehicle
+        /// Active driver for current vehicle, null if there no active driver
         /// </summary>
         public Driver? ActiveDriver { get; set; }
     }

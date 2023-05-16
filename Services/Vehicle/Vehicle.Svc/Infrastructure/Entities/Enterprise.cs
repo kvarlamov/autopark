@@ -13,8 +13,8 @@ namespace AutoPark.Svc.Infrastructure.Entities
 
         public int NumberOfStaff { get; set; }
 
-        public List<Vehicle> Vehicles { get; set; }
+        public List<Vehicle> Vehicles { get; set; } = new();
 
-        public List<Driver> Drivers { get; set; }
+        public List<Driver> Drivers { get; set; } = new();
     }
 }

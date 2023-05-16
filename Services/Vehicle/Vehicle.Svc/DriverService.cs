@@ -20,7 +20,6 @@ namespace AutoPark.Svc
         public async Task<List<DriverDto>> GetDriversAsync()
         {
             var drivers = await _db.Drivers
-                .Include(x => x.Enterprise)
                 .Include(x => x.Vehicles)
                 .AsNoTracking()
                 .ToListAsync();
@@ -44,11 +43,13 @@ namespace AutoPark.Svc
 
             return new DriverDto()
             {
+                Id = driver.Id,
                 Name = driver.Name,
                 Age = driver.Age,
                 Salary = driver.Salary,
-                EnterpriseId = driver.EnterpriseId,
-                Vehicles = vehicles
+                Enterprise = driver.EnterpriseId,
+                Vehicles = vehicles,
+                OnVehicle = driver.OnVehicleId
             };
         }
     }

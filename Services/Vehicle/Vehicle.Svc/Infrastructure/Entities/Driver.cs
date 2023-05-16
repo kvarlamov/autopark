@@ -18,12 +18,12 @@ namespace AutoPark.Svc.Infrastructure.Entities
 
         public Enterprise Enterprise { get; set; }
         
-        public List<Vehicle>  Vehicles { get; set; }
+        public List<Vehicle>  Vehicles { get; set; } = new();
 
         public long? OnVehicleId { get; set; }
         
         public Vehicle? OnVehicle { get; set; }
-        // could be actie for one car
+        // could be active for one car
         // public bool IsActive { get; set; }
     }
 }

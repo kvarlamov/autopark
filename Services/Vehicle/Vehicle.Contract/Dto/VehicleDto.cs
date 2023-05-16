@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using BaseTypes;
 using Vehicle.Contract.Enums;
 
@@ -35,5 +36,11 @@ namespace Vehicle.Contract.Dto
         
         public string BrandName { get; set; }
         public long BrandId { get; set; }
+        
+        public List<long> Drivers { get; set; }
+
+        public long? ActiveDriver { get; set; }
+        
+        public long Enterprise { get; set; }
     }
 }
