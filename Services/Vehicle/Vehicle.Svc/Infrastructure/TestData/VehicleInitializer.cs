@@ -161,8 +161,21 @@ namespace AutoPark.Svc.Infrastructure.TestData
             _db.Enterprises.AddRange(enterprise1, enterprise2, enterprise3);
 
             _db.SaveChanges();
+            
+            // // Автомобиль и водитель могут принадлежать только одному предприятию.
+            // enterprise2.Vehicles.Add(vehicle1);
+            // _db.SaveChanges();
+            //
+            // // Автомобиль и водитель могут принадлежать только одному предприятию.
+            // enterprise2.Drivers.Add(driver1);
+            // _db.SaveChanges();
+            //
+            // // Активный водитель может работать только на одной машине (не может быть назначен активным на второй автомобиль).
+            // vehicle2.ActiveDriver = driver1;
+            // _db.SaveChanges();
         }
     }
+    
     
     public static class FakeDataFactory
     {
