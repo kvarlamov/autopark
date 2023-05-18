@@ -1,9 +1,11 @@
 ﻿using AutoPark.Svc.Infrastructure.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace AutoPark.Svc.Infrastructure
 {
-    public class VehicleContext : DbContext
+    public class VehicleContext : IdentityDbContext<Manager, IdentityRole<long>, long>
     {
         public DbSet<AutoPark.Svc.Infrastructure.Entities.Vehicle> Vehicles { get; set; }
         public DbSet<Brand> Brands { get; set; }
@@ -11,6 +13,7 @@ namespace AutoPark.Svc.Infrastructure
         public DbSet<Entities.Driver> Drivers { get; set; }
 
         public DbSet<Entities.Enterprise> Enterprises { get; set; }
+        // public DbSet<ManagerEnterprises> ManagerEnterprises { get; set; }
 
         public VehicleContext(DbContextOptions<VehicleContext> options) : base(options) { }
 
@@ -32,6 +35,11 @@ namespace AutoPark.Svc.Infrastructure
                 .HasMany(v => v.Drivers)
                 .WithMany(d => d.Vehicles)
                 .UsingEntity(j => j.ToTable("Vehicles_Drivers"));
+            
+            modelBuilder.Entity<Manager>()
+                .HasMany(m => m.Enterprises)
+                .WithMany(e => e.Managers)
+                .UsingEntity(j => j.ToTable("ManagerEnterprises"));
             
             base.OnModelCreating(modelBuilder);
         }

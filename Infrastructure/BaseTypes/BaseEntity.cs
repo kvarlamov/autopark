@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace BaseTypes
+﻿namespace BaseTypes
 {
     public class BaseEntity
     {

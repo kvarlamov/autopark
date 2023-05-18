@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace WebClient.Shared
+﻿namespace WebClient.Shared
 {
     public class BrandSimpleDto
     {

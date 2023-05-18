@@ -1,10 +1,12 @@
 using System;
 using AutoPark.Svc;
 using AutoPark.Svc.Infrastructure;
+using AutoPark.Svc.Infrastructure.Entities;
 using AutoPark.Svc.Infrastructure.TestData;
 using Driver.Contract;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,9 +36,16 @@ namespace AutoPark.Api
 
             services.AddDbContext<VehicleContext>(options => options.UseNpgsql(Configuration.GetConnectionString("AutoParkDB")));
 
+            // Add Services
             services.AddScoped<IVehicleService, VehicleService>();
             services.AddScoped<IEnterpriseService, EnterpriseService>();
             services.AddScoped<IDriverService, DriverService>();
+            services.AddScoped<IManagerService, ManagerService>();
+            
+            // Add Identity
+            services.AddIdentity<Manager, IdentityRole<long>>()
+                .AddEntityFrameworkStores<VehicleContext>()
+                .AddDefaultTokenProviders();
             
             services.AddCors(options =>
             {
@@ -64,6 +73,7 @@ namespace AutoPark.Api
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
             
             app.UseCors("AllowBlazorClient");

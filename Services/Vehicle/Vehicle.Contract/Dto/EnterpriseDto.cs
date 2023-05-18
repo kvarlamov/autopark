@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 using BaseTypes;
-using Driver.Contract.Dto;
-using Vehicle.Contract.Dto;
 
 namespace Enterprise.Contract.Dto
 {
@@ -18,5 +16,7 @@ namespace Enterprise.Contract.Dto
         public List<long> Vehicles { get; set; }
 
         public List<long> Drivers { get; set; }
+
+        public List<long> Managers { get; set; }
     }
 }

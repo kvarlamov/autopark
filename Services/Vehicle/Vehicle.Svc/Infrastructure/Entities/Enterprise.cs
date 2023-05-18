@@ -16,5 +16,7 @@ namespace AutoPark.Svc.Infrastructure.Entities
         public List<Vehicle> Vehicles { get; set; } = new();
 
         public List<Driver> Drivers { get; set; } = new();
+
+        public List<Manager> Managers { get; set; } = new();
     }
 }

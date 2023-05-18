@@ -111,6 +111,17 @@ namespace AutoPark.Svc.Infrastructure.TestData
                 Salary = 56000
             };
             driver3.Vehicles = new List<Entities.Vehicle> {vehicle3};
+            
+            var manager1 = new Manager()
+            {
+                Email = "manager1@man.com",
+                UserName = "manager1"
+            };
+            var manager2 = new Manager()
+            {
+                Email = "manager2@man.com",
+                UserName = "manager2"
+            };
 
             // with cars and drivers
             var enterprise1 = new Entities.Enterprise
@@ -120,9 +131,10 @@ namespace AutoPark.Svc.Infrastructure.TestData
                 Code = 112005,
                 NumberOfStaff = 1_000
             };
-            enterprise1.Vehicles = new List<Entities.Vehicle> { vehicle1, vehicle2 };
-            enterprise1.Drivers = new List<Entities.Driver> { driver1, driver2 };
-            
+            enterprise1.Vehicles.AddRange(new []{vehicle1, vehicle2});
+            enterprise1.Drivers.AddRange(new []{driver1, driver2});
+            enterprise1.Managers.Add(manager1);
+
             // with cars and drivers
             var enterprise2 = new Entities.Enterprise
             {
@@ -131,8 +143,9 @@ namespace AutoPark.Svc.Infrastructure.TestData
                 Code = 715105,
                 NumberOfStaff = 10_000
             };
-            enterprise2.Vehicles = new List<Entities.Vehicle> {vehicle3};
-            enterprise2.Drivers = new List<Entities.Driver> {driver3};
+            enterprise2.Vehicles.Add(vehicle3);
+            enterprise2.Drivers.Add(driver3);
+            enterprise2.Managers.AddRange(new []{manager1, manager2});
             
             // with cars but without drivers
             var enterprise3 = new Entities.Enterprise
@@ -142,7 +155,9 @@ namespace AutoPark.Svc.Infrastructure.TestData
                 Code = 377005,
                 NumberOfStaff = 500
             };
-            enterprise3.Vehicles = new List<Entities.Vehicle> {vehicle4};
+            enterprise3.Vehicles.Add(vehicle4);
+            enterprise3.Managers.Add(manager2);
+            
             _db.Enterprises.AddRange(enterprise1, enterprise2, enterprise3);
 
             _db.SaveChanges();

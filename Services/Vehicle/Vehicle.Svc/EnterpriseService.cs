@@ -22,6 +22,7 @@ namespace AutoPark.Svc
             var enterprises = await _db.Enterprises
                 .Include(e => e.Drivers)
                 .Include(e => e.Vehicles)
+                .Include(e => e.Managers)
                 .ToListAsync();
 
             var result = new List<EnterpriseDto>();
@@ -48,6 +49,12 @@ namespace AutoPark.Svc
                 vehicles.AddRange(enterprise.Vehicles.Select(x => x.Id));
             }
 
+            List<long> managers = new List<long>();
+            if (enterprise.Managers is {Count: > 0})
+            {
+                managers.AddRange(enterprise.Managers.Select(x => x.Id));
+            }
+
             return new EnterpriseDto()
             {
                 Id = enterprise.Id,
@@ -56,7 +63,8 @@ namespace AutoPark.Svc
                 Code = enterprise.Code,
                 Drivers = drivers,
                 NumberOfStaff = enterprise.NumberOfStaff,
-                Vehicles = vehicles
+                Vehicles = vehicles,
+                Managers = managers
             };
         }
     }
