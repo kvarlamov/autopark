@@ -45,7 +45,11 @@ namespace AutoPark.Svc
         public async Task<VehicleDto> GetVehicle(long id)
         {
             //todo - add everywhere compiledquery
-            var entity = await _db.Vehicles.Include(v => v.Brand).AsNoTracking().FirstOrDefaultAsync(v => v.Id == id);
+            var entity = await _db.Vehicles
+                .Include(v => v.Brand)
+                .Include(v => v.Drivers)
+                .Include(v => v.ActiveDriver)
+                .AsNoTracking().FirstOrDefaultAsync(v => v.Id == id);
             if (entity == null)
                 throw new Exception($"Vehicle with id {id} not found");
 

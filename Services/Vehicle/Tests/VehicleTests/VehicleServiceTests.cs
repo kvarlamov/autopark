@@ -9,6 +9,8 @@ using Microsoft.EntityFrameworkCore;
 using Vehicle.Contract;
 using Xunit;
 using Moq;
+using Newtonsoft.Json;
+using Vehicle.Contract.Dto;
 
 namespace VehicleTests
 {
@@ -51,15 +53,18 @@ namespace VehicleTests
 
         #region IntegrationTests
 
-        [Fact]
-        public async Task GetVehicle_Exist_CorrectDto()
+        [Theory]
+        [MemberData(nameof(VehicleTestData.GetVehicleByIdData), MemberType = typeof(VehicleTestData))]
+        public async Task GetVehicle_Exist_CorrectDto(VehicleDto expectedDto)
         {
             // Act
-            var vehicleDto = await _vehicleService.GetVehicle(1);
+            var actualDto = await _vehicleService.GetVehicle(1);
             
-            Assert.NotNull(vehicleDto);
-            Assert.Equal(1, vehicleDto.Id );
-            Assert.Equal(90_000, vehicleDto.Cost );
+            Assert.NotNull(actualDto);
+            var expected = JsonConvert.SerializeObject(expectedDto);
+            var actual = JsonConvert.SerializeObject(actualDto);
+            
+            Assert.Equal(expected, actual);
         }
 
         [Fact]
