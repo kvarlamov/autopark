@@ -1,4 +1,5 @@
 using System;
+using AutoPark.Api.Authentication;
 using AutoPark.Svc;
 using AutoPark.Svc.Infrastructure;
 using AutoPark.Svc.Infrastructure.Entities;
@@ -29,9 +30,34 @@ namespace AutoPark.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddSwaggerGen(c =>
+            services.AddSwaggerGen(opt =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo {Title = "Vehicle.Api", Version = "v1"});
+                opt.SwaggerDoc("v1", new OpenApiInfo {Title = "Vehicle.Api", Version = "v1"});
+                
+                opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Please enter token",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.Http,
+                    BearerFormat = "JWT",
+                    Scheme = "bearer"
+                });
+                
+                opt.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type=ReferenceType.SecurityScheme,
+                                Id="Bearer"
+                            }
+                        },
+                        new string[]{}
+                    }
+                });
             });
 
             services.AddDbContext<VehicleContext>(options => options.UseNpgsql(Configuration.GetConnectionString("AutoParkDB")));
@@ -41,6 +67,12 @@ namespace AutoPark.Api
             services.AddScoped<IEnterpriseService, EnterpriseService>();
             services.AddScoped<IDriverService, DriverService>();
             services.AddScoped<IManagerService, ManagerService>();
+            services.AddScoped<IAccountService, AccountService>();
+            
+            services
+                .AddAuthentication()
+                .AddScheme<JwtSchemeOptions, JwtSchemeHandler>(AuthSchemas.Jwt, options => { options.IsActive = true; });
+            services.AddAuthorization();
             
             // Add Identity
             services.AddIdentity<Manager, IdentityRole<long>>()
@@ -93,7 +125,9 @@ namespace AutoPark.Api
             try
             {
                 var context = services.GetRequiredService<VehicleContext>();
-                VehicleInitializer.Initialize(context);
+                var userManager = services.GetRequiredService<UserManager<Manager>>();
+                var roleManager = services.GetRequiredService<RoleManager<IdentityRole<long>>>();
+                VehicleInitializer.Initialize(context, userManager, roleManager);
             }
             catch(Exception e)
             {

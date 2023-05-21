@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using AutoPark.Svc.Infrastructure.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Vehicle.Contract.Enums;
 
@@ -7,7 +8,7 @@ namespace AutoPark.Svc.Infrastructure.TestData
 {
     public sealed class VehicleInitializer
     {
-        public static void Initialize(VehicleContext _db)
+        public static void Initialize(VehicleContext _db, UserManager<Manager> userManager, RoleManager<IdentityRole<long>> roleManager)
         {
             DatabaseFacade db = _db.Database;
             db.EnsureDeleted();
@@ -111,17 +112,36 @@ namespace AutoPark.Svc.Infrastructure.TestData
                 Salary = 56000
             };
             driver3.Vehicles = new List<Entities.Vehicle> {vehicle3};
-            
+
+            string password = "Pass123$";
             var manager1 = new Manager()
             {
                 Email = "manager1@man.com",
-                UserName = "manager1"
+                UserName = "manager1@man.com",
+                
             };
             var manager2 = new Manager()
             {
                 Email = "manager2@man.com",
-                UserName = "manager2"
+                UserName = "manager2@man.com"
             };
+
+            if (roleManager.FindByNameAsync("manager").GetAwaiter().GetResult() == null)
+            {
+                roleManager.CreateAsync(new IdentityRole<long>("manager")).GetAwaiter().GetResult();
+            }
+
+            IdentityResult result1 = userManager.CreateAsync(manager1, password).GetAwaiter().GetResult();
+            if (result1.Succeeded)
+            {
+                userManager.AddToRoleAsync(manager1, "manager").GetAwaiter().GetResult();
+            }
+            
+            IdentityResult result2 = userManager.CreateAsync(manager2, password).GetAwaiter().GetResult();
+            if (result2.Succeeded)
+            {
+                userManager.AddToRoleAsync(manager2, "manager").GetAwaiter().GetResult();
+            }
 
             // with cars and drivers
             var enterprise1 = new Entities.Enterprise

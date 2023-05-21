@@ -6,12 +6,19 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.30.1" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.30.1" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Vehicle.Contract\Vehicle.Contract.csproj" />
       <ProjectReference Include="..\Vehicle.Svc\Vehicle.Svc.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Models\" />
+      <Folder Include="Views\" />
     </ItemGroup>
 
 </Project>

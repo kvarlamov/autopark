@@ -31,7 +31,7 @@ namespace VehicleTests
             DbContext = new VehicleContext(options);
 
             // seed InMemory Database with test data
-            VehicleInitializer.Initialize(DbContext);
+            VehicleInitializer.Initialize(DbContext, null, null);
         }
 
         public void Dispose()

@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoPark.Api.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Vehicle.Contract;
@@ -23,6 +25,7 @@ namespace AutoPark.Api.Controllers
         }
 
         [HttpGet]
+        [Authorize(AuthenticationSchemes = AuthSchemas.Jwt)]
         public async Task<List<VehicleDto>> Get()
         {
             return await _vehicleService.GetVehicles();
