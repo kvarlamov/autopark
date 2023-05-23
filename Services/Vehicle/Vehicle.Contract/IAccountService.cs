@@ -5,6 +5,6 @@ namespace Vehicle.Contract
 {
     public interface IAccountService
     {
-        public Task<LoginDto> CheckLogin(LoginDto loginDto);
+        public Task<LoginViewModel> CheckLogin(LoginViewModel loginDto);
     }
 }

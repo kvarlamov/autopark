@@ -21,7 +21,7 @@ namespace AutoPark.Svc
             _userManager = userManager;
         }
         
-        public async Task<LoginDto> CheckLogin(LoginDto model)
+        public async Task<LoginViewModel> CheckLogin(LoginViewModel model)
         {
             var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, false, false);
             if (!result.Succeeded) return null;

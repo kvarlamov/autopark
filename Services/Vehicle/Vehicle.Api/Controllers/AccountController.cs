@@ -1,17 +1,13 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AutoPark.Api.Authentication;
 using AutoPark.Api.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 using Vehicle.Contract;
 
 namespace AutoPark.Api.Controllers
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class AccountController : ControllerBase
+    // todo IMPORTANT need to move to separate Identity project!
+    public class AccountController : Controller
     {
         private readonly IAccountService _accountService;
 
@@ -20,15 +16,25 @@ namespace AutoPark.Api.Controllers
             _accountService = accountService;
         }
         
-        [HttpPost("token")]
-        public async Task<IActionResult> Token([FromBody] LoginDto dto)
+        [HttpGet("login")]
+        public IActionResult Login(string returnUrl = null)
         {
-            if (dto == null)
+            return View(new LoginViewModel { ReturnUrl = returnUrl });
+        }
+        
+        [HttpPost("login")]
+        [ValidateAntiForgeryToken]
+        [Consumes("application/x-www-form-urlencoded", "application/json")]
+        public async Task<IActionResult> Token([FromForm] LoginViewModel dto)
+        {
+            if (dto == null || (dto.UserName is null && dto.Email is null))
                 return BadRequest(new { errorText = "Invalid username or password." });
+
+            if (dto.UserName is null)
+                dto.UserName = dto.Email;
             
             var checkCredentialsResult = await _accountService.CheckLogin(dto);
             
-            //todo - раскомментить когда сделаю нормально с ролями
             if (checkCredentialsResult == null)
                 return BadRequest(new { errorText = "Invalid username or password." });
             

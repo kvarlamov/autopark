@@ -17,7 +17,7 @@ namespace AutoPark.Api.Authentication
             return string.Empty;
         }
 
-        public static string CreateJwtToken(LoginDto loginModel)
+        public static string CreateJwtToken(LoginViewModel loginModel)
         {
             byte[] keyBytes = Encoding.UTF8.GetBytes(SecretKey);
             // Array.Resize(ref keyBytes, 32);
