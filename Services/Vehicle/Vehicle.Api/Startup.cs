@@ -5,6 +5,7 @@ using AutoPark.Svc.Infrastructure;
 using AutoPark.Svc.Infrastructure.Entities;
 using AutoPark.Svc.Infrastructure.TestData;
 using Driver.Contract;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -76,12 +77,26 @@ namespace AutoPark.Api
             services
                 .AddAuthentication()
                 .AddScheme<JwtSchemeOptions, JwtSchemeHandler>(AuthSchemas.Jwt, options => { options.IsActive = true; });
-            services.AddAuthorization();
-            
+            services.AddAuthorization(options =>
+            {
+                // Создаём политику проверяющую аутентификацию пользователя
+                options.AddPolicy(
+                    Policies.AuthorizedOnly,
+                    policy => policy.RequireAuthenticatedUser()
+                );
+                
+                options.AddPolicy(
+                    Policies.IsManager,
+                    policy => policy.AddRequirements(new IsManagerRequirement())
+                    );
+            });
+
             // Add Identity
             services.AddIdentity<Manager, IdentityRole<long>>()
                 .AddEntityFrameworkStores<VehicleContext>()
                 .AddDefaultTokenProviders();
+
+            services.AddSingleton<IAuthorizationHandler, IsManagerPolicyHandler>();
             
             services.AddCors(options =>
             {

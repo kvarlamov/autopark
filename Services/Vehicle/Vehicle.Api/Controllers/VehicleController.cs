@@ -32,6 +32,8 @@ namespace AutoPark.Api.Controllers
         }
         
         [HttpGet("{id:long}")]
+        [Authorize(AuthenticationSchemes = AuthSchemas.Jwt)]
+        [Authorize(Policy = Policies.IsManager)]
         public async Task<VehicleDto> Get(long id)
         {
             return await _vehicleService.GetVehicle(id);
