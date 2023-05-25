@@ -40,6 +40,8 @@ namespace AutoPark.Api.Controllers
         }
 
         [HttpPost]
+        [Authorize(AuthenticationSchemes = AuthSchemas.Jwt)]
+        [Authorize(Policy = Policies.IsManager)]
         public async Task<VehicleDto> CreateAsync([FromBody] VehicleDto dto)
         {
             var res = await _vehicleService.CreateAsync(dto);
@@ -48,6 +50,8 @@ namespace AutoPark.Api.Controllers
         }
         
         [HttpPut]
+        [Authorize(AuthenticationSchemes = AuthSchemas.Jwt)]
+        [Authorize(Policy = Policies.IsManager)]
         public async Task<VehicleDto> UpdateAsync([FromBody] VehicleDto dto)
         {
             var res = await _vehicleService.UpdateAsync(dto);
@@ -56,6 +60,8 @@ namespace AutoPark.Api.Controllers
         }
         
         [HttpDelete("{id}")]
+        [Authorize(AuthenticationSchemes = AuthSchemas.Jwt)]
+        [Authorize(Policy = Policies.IsManager)]
         public async Task<ActionResult> DeleteAsync(long id)
         {
             var res = await _vehicleService.DeleteAsync(id);

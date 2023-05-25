@@ -68,6 +68,13 @@ namespace AutoPark.Svc
             if (brand != null)
                 newEntity.Brand = brand;
 
+            if (dto.Enterprise == 0)
+                throw new ArgumentException("Enterprise can't be 0");
+
+            var enterptise = await _db.Enterprises.FirstOrDefaultAsync(e => e.Id == dto.Enterprise);
+            if (enterptise != null)
+                newEntity.Enterprise = enterptise;
+
             _db.Vehicles.Add(newEntity);
             await _db.SaveChangesAsync();
 
@@ -84,6 +91,10 @@ namespace AutoPark.Svc
             var brand = await _db.Brands.FirstOrDefaultAsync(brand => brand.Id == dto.BrandId);
             if (brand != null)
                 newEntity.Brand = brand;
+            
+            var enterptise = await _db.Enterprises.FirstOrDefaultAsync(e => e.Id == dto.Enterprise);
+            if (enterptise != null)
+                newEntity.Enterprise = enterptise;
 
             UpdateEntityWithNewFields(existed, newEntity);
 
