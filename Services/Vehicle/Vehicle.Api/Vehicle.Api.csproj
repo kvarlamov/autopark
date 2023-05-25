@@ -13,6 +13,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Vehicle.Api.Module\Vehicle.Api.Module.csproj" />
       <ProjectReference Include="..\Vehicle.Contract\Vehicle.Contract.csproj" />
       <ProjectReference Include="..\Vehicle.Svc\Vehicle.Svc.csproj" />
     </ItemGroup>

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoPark.Svc.Infrastructure;
@@ -23,6 +24,7 @@ namespace AutoPark.Svc
                 .Include(e => e.Drivers)
                 .Include(e => e.Vehicles)
                 .Include(e => e.Managers)
+                .AsNoTracking()
                 .ToListAsync();
 
             var result = new List<EnterpriseDto>();
@@ -33,6 +35,41 @@ namespace AutoPark.Svc
             }
 
             return result;
+        }
+
+        public async Task<List<EnterpriseDto>> GetEnterprisesByIdsAsync(List<long> ids)
+        {
+            var enterprises = await _db.Enterprises
+                .Include(e => e.Drivers)
+                .Include(e => e.Vehicles)
+                .Include(e => e.Managers)
+                .AsNoTracking()
+                .Where(x => ids.Contains(x.Id))
+                .ToListAsync();
+            
+            var result = new List<EnterpriseDto>();
+
+            foreach (var enterprise in enterprises)
+            {
+                result.Add(MapEnterpriseEntityToDto(enterprise));
+            }
+
+            return result;
+        }
+
+        public async Task<EnterpriseDto> GetEnterprise(long id)
+        {
+            var enterprise = await _db.Enterprises
+                .Include(e => e.Drivers)
+                .Include(e => e.Vehicles)
+                .Include(e => e.Managers)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == id);
+            
+            if (enterprise == null)
+                throw new Exception($"Entity with id {id} not found");
+
+            return MapEnterpriseEntityToDto(enterprise);
         }
 
         private static EnterpriseDto MapEnterpriseEntityToDto(Infrastructure.Entities.Enterprise enterprise)

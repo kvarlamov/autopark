@@ -5,16 +5,20 @@ using AutoPark.Svc.Infrastructure;
 using Driver.Contract;
 using Driver.Contract.Dto;
 using Microsoft.EntityFrameworkCore;
+using Vehicle.Contract;
+using Driver = AutoPark.Svc.Infrastructure.Entities.Driver;
 
 namespace AutoPark.Svc
 {
     public class DriverService : IDriverService
     {
         private readonly VehicleContext _db;
+        private readonly IVehicleService _vehicleService;
 
-        public DriverService(VehicleContext db)
+        public DriverService(VehicleContext db, IVehicleService vehicleService)
         {
             _db = db;
+            _vehicleService = vehicleService;
         }
         
         public async Task<List<DriverDto>> GetDriversAsync()
@@ -25,7 +29,7 @@ namespace AutoPark.Svc
                 .ToListAsync();
             
             //todo - add automapper
-            List<DriverDto> vehicleDtos = new List<DriverDto>();
+            var vehicleDtos = new List<DriverDto>();
 
             foreach (var driver in drivers)
             {
@@ -34,6 +38,26 @@ namespace AutoPark.Svc
 
             return vehicleDtos;
         }
+
+        public async Task<DriverDto> CreateAsync(DriverDto driverDto)
+        {
+            var vehicles = await _vehicleService.GetVehiclesByIds(driverDto.Vehicles);
+            var newEntity = MapDtoToDriverEntity(driverDto);
+            //todo - need to provide correct vehicles
+            newEntity.Vehicles = null;
+
+            return MapDriverEntityToDto(newEntity);
+        }
+
+        private static Infrastructure.Entities.Driver MapDtoToDriverEntity(DriverDto driverDto) =>
+            new Infrastructure.Entities.Driver()
+            {
+                Name = driverDto.Name,
+                Age = driverDto.Age,
+                Salary = driverDto.Salary,
+                EnterpriseId = driverDto.Enterprise,
+                OnVehicleId = driverDto.OnVehicle
+            };
 
         private static DriverDto MapDriverEntityToDto(Infrastructure.Entities.Driver driver)
         {

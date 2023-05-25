@@ -15,6 +15,8 @@ namespace Vehicle.Contract
         /// <returns>Список транспортных средств</returns>
         Task<List<VehicleDto>> GetVehicles();
         
+        Task<List<VehicleDto>> GetVehiclesByIds(List<long> ids);
+        
         Task<VehicleDto> GetVehicle(long id);
 
         Task<VehicleDto> CreateAsync(VehicleDto dto);

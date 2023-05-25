@@ -42,6 +42,27 @@ namespace AutoPark.Svc
             return vehicleDtos;
         }
 
+        public async Task<List<VehicleDto>> GetVehiclesByIds(List<long> ids)
+        {
+            var vehicles = await _db.Vehicles
+                .Include(v => v.Brand)
+                .Include(v => v.ActiveDriver)
+                .Include(v => v.Drivers)
+                .AsNoTracking()
+                .Where(x => ids.Contains(x.Id))
+                .ToListAsync();
+            
+            //todo - add automapper
+            var vehicleDtos = new List<VehicleDto>();
+
+            foreach (var vehicle in vehicles)
+            {
+                vehicleDtos.Add(MapVehicleEntityToDto(vehicle));
+            }
+
+            return vehicleDtos;
+        }
+
         public async Task<VehicleDto> GetVehicle(long id)
         {
             //todo - add everywhere compiledquery
@@ -71,9 +92,9 @@ namespace AutoPark.Svc
             if (dto.Enterprise == 0)
                 throw new ArgumentException("Enterprise can't be 0");
 
-            var enterptise = await _db.Enterprises.FirstOrDefaultAsync(e => e.Id == dto.Enterprise);
-            if (enterptise != null)
-                newEntity.Enterprise = enterptise;
+            var enterprise = await _db.Enterprises.FirstOrDefaultAsync(e => e.Id == dto.Enterprise);
+            if (enterprise != null)
+                newEntity.Enterprise = enterprise;
 
             _db.Vehicles.Add(newEntity);
             await _db.SaveChangesAsync();

@@ -15,6 +15,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Vehicle.Api.Module.Tools;
 using Vehicle.Contract;
 
 namespace AutoPark.Api
@@ -65,14 +66,7 @@ namespace AutoPark.Api
                 });
             });
 
-            services.AddDbContext<VehicleContext>(options => options.UseNpgsql(Configuration.GetConnectionString("AutoParkDB")));
-
-            // Add Services
-            services.AddScoped<IVehicleService, VehicleService>();
-            services.AddScoped<IEnterpriseService, EnterpriseService>();
-            services.AddScoped<IDriverService, DriverService>();
-            services.AddScoped<IManagerService, ManagerService>();
-            services.AddScoped<IAccountService, AccountService>();
+            services.AddVehicleDependencies(Configuration);
             
             services
                 .AddAuthentication()

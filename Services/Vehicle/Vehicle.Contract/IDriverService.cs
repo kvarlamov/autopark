@@ -7,5 +7,7 @@ namespace Driver.Contract
     public interface IDriverService
     {
         Task<List<DriverDto>> GetDriversAsync();
+
+        Task<DriverDto> CreateAsync(DriverDto driverDto);
     }
 }
