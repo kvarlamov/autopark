@@ -30,7 +30,13 @@ namespace AutoPark.Api.Controllers
         {
             return await _vehicleService.GetVehicles();
         }
-        
+
+        [HttpGet("paginated")]
+        public async Task<List<VehicleDto>> GetPaginated([FromQuery]PaginationRequestDto request)
+        {
+            return await _vehicleService.GetVehicles(request);
+        }
+
         [HttpGet("{id:long}")]
         [Authorize(AuthenticationSchemes = AuthSchemas.Jwt)]
         [Authorize(Policy = Policies.IsManager)]

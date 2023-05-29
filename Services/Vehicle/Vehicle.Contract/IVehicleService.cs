@@ -30,5 +30,7 @@ namespace Vehicle.Contract
         /// </summary>
         /// <returns>Список брендов</returns>
         Task<List<BrandDto>> GetBrands();
+
+        Task<List<VehicleDto>> GetVehicles(PaginationRequestDto request);
     }
 }

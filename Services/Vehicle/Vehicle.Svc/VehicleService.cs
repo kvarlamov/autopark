@@ -158,7 +158,36 @@ namespace AutoPark.Svc
 
             return brandDtos;
         }
-        
+
+        public async Task<List<VehicleDto>> GetVehicles(PaginationRequestDto request)
+        {
+            var (page, take) = request;
+            if (page <= 0)
+                throw new ArgumentException("Страница не может быть < 1");
+            //todo - добавить метод count и валидировать другие параметры
+            
+            int skip = take * (page - 1);
+            
+            var vehicles = await _db.Vehicles
+                .Include(v => v.Brand)
+                .Include(v => v.ActiveDriver)
+                .Include(v => v.Drivers)
+                .AsNoTracking()
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
+            
+            // todo - add automapper
+            List<VehicleDto> vehicleDtos = new List<VehicleDto>();
+
+            foreach (var vehicle in vehicles)
+            {
+                vehicleDtos.Add(MapVehicleEntityToDto(vehicle));
+            }
+
+            return vehicleDtos;
+        }
+
         private static VehicleDto MapVehicleEntityToDto(Infrastructure.Entities.Vehicle vehicle)
         {
             List<long> drivers = new List<long>();
