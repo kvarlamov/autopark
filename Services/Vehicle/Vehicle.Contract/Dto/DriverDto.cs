@@ -15,8 +15,8 @@ namespace Driver.Contract.Dto
         public decimal Salary { get; set; }
 
         public long Enterprise { get; set; }
-        
-        public List<long>  Vehicles { get; set; }
+
+        public List<long> Vehicles { get; set; } = new();
 
         public long? OnVehicle { get; set; }
     }

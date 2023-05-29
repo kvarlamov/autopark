@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoPark.Svc.Infrastructure;
 using Enterprise.Contract.Dto;
 using Microsoft.EntityFrameworkCore;
 using Vehicle.Contract;
+using Enterprise = AutoPark.Svc.Infrastructure.Entities.Enterprise;
 
 namespace AutoPark.Svc
 {
@@ -70,6 +72,23 @@ namespace AutoPark.Svc
                 throw new Exception($"Entity with id {id} not found");
 
             return MapEnterpriseEntityToDto(enterprise);
+        }
+
+        public async Task<EnterpriseDto> UpdateAsync(EnterpriseDto dto)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static Infrastructure.Entities.Enterprise MapDtoToEnterpriseEntity(EnterpriseDto dto)
+        {
+            throw new NotImplementedException();
+            
+            return new Infrastructure.Entities.Enterprise()
+            {
+                Name = dto.Name,
+                Code = dto.Code,
+                
+            };
         }
 
         private static EnterpriseDto MapEnterpriseEntityToDto(Infrastructure.Entities.Enterprise enterprise)

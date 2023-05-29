@@ -35,8 +35,8 @@ namespace Vehicle.Contract.Dto
         
         public string BrandName { get; set; }
         public long BrandId { get; set; }
-        
-        public List<long> Drivers { get; set; }
+
+        public List<long> Drivers { get; set; } = new();
 
         public long? ActiveDriver { get; set; }
         

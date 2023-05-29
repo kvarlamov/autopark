@@ -178,7 +178,34 @@ namespace AutoPark.Svc.Infrastructure.TestData
             enterprise3.Vehicles.Add(vehicle4);
             enterprise3.Managers.Add(manager2);
             
-            _db.Enterprises.AddRange(enterprise1, enterprise2, enterprise3);
+            var enterprise4 = new Entities.Enterprise
+            {
+                Name = "Test enterprise1",
+                City = "Vladivostok",
+                Code = 278105,
+                NumberOfStaff = 1500
+            };
+            
+            var enterprise5 = new Entities.Enterprise
+            {
+                Name = "Test enterprise2",
+                City = "Murmansk",
+                Code = 971505,
+                NumberOfStaff = 1200
+            };
+            
+            var enterprise6 = new Entities.Enterprise
+            {
+                Name = "Test enterprise3",
+                City = "Chelyabinsk",
+                Code = 325691,
+                NumberOfStaff = 200
+            };
+            enterprise4.Managers.AddRange(new []{manager1, manager2});
+            enterprise5.Managers.AddRange(new []{manager1, manager2});
+            enterprise6.Managers.AddRange(new []{manager1, manager2});
+            
+            _db.Enterprises.AddRange(enterprise1, enterprise2, enterprise3, enterprise4, enterprise5, enterprise6);
 
             _db.SaveChanges();
             

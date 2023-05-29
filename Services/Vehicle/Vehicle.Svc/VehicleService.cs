@@ -141,7 +141,7 @@ namespace AutoPark.Svc
             var brands = await _db.Brands.AsNoTracking().ToListAsync();
             
             //todo - add automapper
-            List<BrandDto> brandDtos = new List<BrandDto>();
+            var brandDtos = new List<BrandDto>();
 
             foreach (var brand in brands)
             {

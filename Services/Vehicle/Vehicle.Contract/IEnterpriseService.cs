@@ -11,5 +11,7 @@ namespace Vehicle.Contract
         Task<List<EnterpriseDto>> GetEnterprisesByIdsAsync(List<long> ids);
 
         Task<EnterpriseDto> GetEnterprise(long id);
+
+        Task<EnterpriseDto> UpdateAsync(EnterpriseDto dto);
     }
 }

@@ -41,10 +41,16 @@ namespace AutoPark.Svc
 
         public async Task<DriverDto> CreateAsync(DriverDto driverDto)
         {
-            var vehicles = await _vehicleService.GetVehiclesByIds(driverDto.Vehicles);
             var newEntity = MapDtoToDriverEntity(driverDto);
-            //todo - need to provide correct vehicles
-            newEntity.Vehicles = null;
+
+            if (driverDto.Vehicles is {Count: > 0})
+            {
+                var vehicles = await _db.Vehicles.Where(x => driverDto.Vehicles.Contains(x.Id)).ToListAsync();
+                newEntity.Vehicles.AddRange(vehicles);
+            }
+
+            _db.Drivers.Add(newEntity);
+            await _db.SaveChangesAsync();
 
             return MapDriverEntityToDto(newEntity);
         }
