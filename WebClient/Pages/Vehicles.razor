@@ -1,9 +1,13 @@
 ﻿@page "/vehicle"
+@using System.Net
+@using System.Net.Http.Headers
+@using WebClient.Services
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JsRuntime
+@inject AuthService AuthService
 
-<h1>Транспортные средства</h1>
+<h3>Транспортные средства</h3>
 
 @if (vehicles == null)
 {
@@ -50,8 +54,38 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        vehicles = new List<VehicleDto>();
-        vehicles = (await Http.GetFromJsonAsync<VehicleDto[]>("vehicle")).ToList();
+        var uri = new Uri(NavigationManager.Uri);
+        var accessTokenFromQueryString = uri.Query
+            .Split(new[] { '?', '&' }, StringSplitOptions.RemoveEmptyEntries)
+            .FirstOrDefault(x => x.StartsWith("accessToken="));
+
+        if (string.IsNullOrEmpty(accessTokenFromQueryString) && !IsAccessTokenAdded())
+        {
+            AuthService.HandleUnauthorized();
+            return;
+        }
+
+        if (!string.IsNullOrEmpty(accessTokenFromQueryString))
+        {
+            accessTokenFromQueryString = accessTokenFromQueryString.Replace("accessToken=", "");
+            Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessTokenFromQueryString);
+        }
+        
+        try
+        {
+            vehicles = new List<VehicleDto>();
+            vehicles = (await Http.GetFromJsonAsync<VehicleDto[]>("vehicle")).ToList();
+        }
+        catch (Exception ex)
+        {
+            AuthService.HandleUnauthorized();
+        }
+    }
+    
+    bool IsAccessTokenAdded()
+    {
+        var authorizationHeader = Http.DefaultRequestHeaders.Authorization;
+        return authorizationHeader is {Scheme: "Bearer" };
     }
     private void NavigateToVehicle(long? id)
     {

@@ -25,28 +25,31 @@ namespace AutoPark.Api.Controllers
         [HttpPost("login")]
         [ValidateAntiForgeryToken]
         [Consumes("application/x-www-form-urlencoded", "application/json")]
-        public async Task<IActionResult> Token([FromForm] LoginViewModel dto)
+        public async Task<IActionResult> Login([FromForm] LoginViewModel model)
         {
-            if (dto == null || (dto.UserName is null && dto.Email is null))
+            if (model == null || (model.UserName is null && model.Email is null))
                 return BadRequest(new { errorText = "Invalid username or password." });
 
-            if (dto.UserName is null)
-                dto.UserName = dto.Email;
+            if (model.UserName is null)
+                model.UserName = model.Email;
             
-            var checkCredentialsResult = await _accountService.CheckLogin(dto);
-            
+            var checkCredentialsResult = await _accountService.CheckLogin(model);
+
             if (checkCredentialsResult == null)
-                return BadRequest(new { errorText = "Invalid username or password." });
+            {
+                // Handle invalid login credentials
+                ModelState.AddModelError("", "Invalid username or password");
+                return View(model);
+            }
             
             var token = JwtService.CreateJwtToken(checkCredentialsResult);
- 
-            var response = new
-            {
-                access_token = token
-            };
 
-            return new JsonResult(response);
+            if (model.ReturnUrl != null)
+            {
+                return Redirect($"{model.ReturnUrl}/?accessToken={token}");
+            }
+            
+            return Redirect($"https://localhost:6003/vehicle?accessToken={token}");
         }
-        
     }
 }

@@ -26,6 +26,7 @@ namespace Generator.UseCases.FillEnterprise
         
         public override string ExecuteBusinessLogic(FillEnterpriseOption options)
         {
+            //todo - оптимизировать наполнение
             if (options.EnterpriseList == null || !options.EnterpriseList.Any())
                 return "List of enterprises is empty. Seeding not performed";
             

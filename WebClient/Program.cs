@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using WebClient.Services;
 
 namespace WebClient
 {
@@ -13,8 +14,16 @@ namespace WebClient
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("#app");
 
+            builder.Services.AddSingleton<ApiConfiguration>(sp => new ApiConfiguration()
+                {BaseAddress = "https://localhost:6005"});
+
             builder.Services.AddScoped(
-                sp => new HttpClient {BaseAddress = new Uri("https://localhost:6005/")});
+                sp =>
+                {
+                    var apiConfig = sp.GetRequiredService<ApiConfiguration>();
+                    return new HttpClient {BaseAddress = new Uri(apiConfig.BaseAddress)};
+                });
+            builder.Services.AddScoped<AuthService>();
 
             await builder.Build().RunAsync();
         }

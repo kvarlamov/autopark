@@ -1,0 +1,80 @@
+﻿@page "/enterprise"
+@using System.Net.Http.Headers
+@using WebClient.Services
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JsRuntime
+@inject AuthService AuthService
+
+<h3>Предприятия</h3>
+
+@if (enterprises == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>City</th>
+            <th>Code</th>
+            <th>Number of staff</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var enterprise in enterprises)
+        {
+            <tr @key="@enterprise.Id">
+                <td>@enterprise.Name</td>
+                <td>@enterprise.City</td>
+                <td>@enterprise.Code</td>
+                <td>@enterprise.NumberOfStaff</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<EnterpriseDto> enterprises;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var uri = new Uri(NavigationManager.Uri);
+        var accessTokenFromQueryString = uri.Query
+            .Split(new[] { '?', '&' }, StringSplitOptions.RemoveEmptyEntries)
+            .FirstOrDefault(x => x.StartsWith("accessToken="));
+
+        if (string.IsNullOrEmpty(accessTokenFromQueryString) && !IsAccessTokenAdded())
+        {
+            AuthService.HandleUnauthorized();
+            return;
+        }
+
+        if (!string.IsNullOrEmpty(accessTokenFromQueryString))
+        {
+            accessTokenFromQueryString = accessTokenFromQueryString.Replace("accessToken=", "");
+            Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessTokenFromQueryString);
+        }
+        
+        try
+        {
+            enterprises = new List<EnterpriseDto>();
+            enterprises = (await Http.GetFromJsonAsync<EnterpriseDto[]>("enterprise")).ToList();
+        }
+        catch (Exception ex)
+        {
+            AuthService.HandleUnauthorized();
+        }
+    }
+    
+    bool IsAccessTokenAdded()
+    {
+        var authorizationHeader = Http.DefaultRequestHeaders.Authorization;
+        return authorizationHeader is {Scheme: "Bearer" };
+    }
+}
