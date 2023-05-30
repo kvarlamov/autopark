@@ -16,7 +16,7 @@ namespace WebClient.Services
         public void HandleUnauthorized()
         {
             // Get the current URL as the return URL
-            var returnUrl = _navigationManager.ToBaseRelativePath(_navigationManager.Uri);
+            var returnUrl = _navigationManager.ToAbsoluteUri(_navigationManager.Uri);
             
             // Redirect to the authentication URL
             _navigationManager.NavigateTo($"{_configuration.BaseAddress}/login?returnUrl={returnUrl}");

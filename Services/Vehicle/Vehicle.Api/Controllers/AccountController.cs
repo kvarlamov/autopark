@@ -24,8 +24,7 @@ namespace AutoPark.Api.Controllers
         
         [HttpPost("login")]
         [ValidateAntiForgeryToken]
-        [Consumes("application/x-www-form-urlencoded", "application/json")]
-        public async Task<IActionResult> Login([FromForm] LoginViewModel model)
+        public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (model == null || (model.UserName is null && model.Email is null))
                 return BadRequest(new { errorText = "Invalid username or password." });
