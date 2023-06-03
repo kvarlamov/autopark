@@ -9,5 +9,7 @@ namespace Driver.Contract
         Task<List<DriverDto>> GetDriversAsync();
 
         Task<DriverDto> CreateAsync(DriverDto driverDto);
+        Task<List<DriverDto>> GetFreeDriversAsync(long[] list);
+        Task<DriverDto> GetDriverByIdAsync(long id);
     }
 }

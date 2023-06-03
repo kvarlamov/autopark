@@ -28,7 +28,7 @@ else
         <tbody>
         @foreach (var enterprise in enterprises)
         {
-            <tr @key="@enterprise.Id">
+            <tr @key="@enterprise.Id"  @onclick="() => NavigateToEnterprise(enterprise.Id)">
                 <td>@enterprise.Name</td>
                 <td>@enterprise.City</td>
                 <td>@enterprise.Code</td>
@@ -70,6 +70,11 @@ else
         {
             AuthService.HandleUnauthorized();
         }
+    }
+    
+    private void NavigateToEnterprise(long? id)
+    {
+        NavigationManager.NavigateTo($"/enterprise/{id}");
     }
     
     bool IsAccessTokenAdded()

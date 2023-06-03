@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Driver.Contract;
 using Driver.Contract.Dto;
@@ -27,6 +28,19 @@ namespace AutoPark.Api.Controllers
         public async Task<List<DriverDto>> GetDriversAsync()
         {
             return await _driverService.GetDriversAsync();
+        }
+
+        [HttpGet("{id:long}")]
+        public async Task<DriverDto> GetDriverByIdAsync(long id)
+        {
+            return await _driverService.GetDriverByIdAsync(id);
+        }
+
+        [HttpGet("freelist")]
+        public async Task<List<DriverDto>> GetFreeDriversAsync([FromQuery]string ids)
+        {
+            var list = ids.Split(",").Select(long.Parse).ToArray();
+            return await _driverService.GetFreeDriversAsync(list);
         }
     }
 }

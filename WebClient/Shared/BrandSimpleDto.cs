@@ -8,6 +8,13 @@ namespace WebClient.Shared
 
         public string Name { get; set; }
     }
+
+    public class DriverSimpleDto
+    {
+        public long Id { get; set; }
+        
+        public string Name { get; set; }
+    }
     
     public class EnterpriseDto
     {

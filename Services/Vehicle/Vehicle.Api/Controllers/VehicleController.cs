@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoPark.Api.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -43,6 +44,13 @@ namespace AutoPark.Api.Controllers
         public async Task<VehicleDto> Get(long id)
         {
             return await _vehicleService.GetVehicle(id);
+        }
+
+        [HttpGet("list")]
+        public async Task<List<VehicleDto>> GetVehiclesByIds([FromQuery]string ids)
+        {
+            var list = ids.Split(",").Select(long.Parse).ToList();
+            return await _vehicleService.GetVehiclesByIds(list);
         }
 
         [HttpPost]

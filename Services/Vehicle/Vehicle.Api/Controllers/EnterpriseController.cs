@@ -31,5 +31,11 @@ namespace AutoPark.Api.Controllers
         {
             return await _enterpriseService.GetEnterprisesAsync();
         }
+
+        [HttpGet("{id:long}")]
+        public async Task<EnterpriseDto> GetEnterpriseByIdAsync(long id)
+        {
+            return await _enterpriseService.GetEnterpriseByIdAsync(id);
+        }
     }
 }

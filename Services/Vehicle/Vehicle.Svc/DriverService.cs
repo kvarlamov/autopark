@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoPark.Svc.Infrastructure;
@@ -53,6 +54,33 @@ namespace AutoPark.Svc
             await _db.SaveChangesAsync();
 
             return MapDriverEntityToDto(newEntity);
+        }
+
+        public async Task<List<DriverDto>> GetFreeDriversAsync(long[] list)
+        {
+            var drivers = await _db.Drivers
+                .Where(x => list.Contains(x.Id) && x.OnVehicleId == null)
+                .AsNoTracking()
+                .ToListAsync();
+            
+            //todo - add automapper
+            var vehicleDtos = new List<DriverDto>();
+
+            foreach (var driver in drivers)
+            {
+                vehicleDtos.Add(MapDriverEntityToDto(driver));
+            }
+
+            return vehicleDtos;
+        }
+
+        public async Task<DriverDto> GetDriverByIdAsync(long id)
+        {
+            var driver = await _db.Drivers.FindAsync(id);
+            if (driver == null)
+                throw new Exception($"Driver with id {id} not found");
+
+            return MapDriverEntityToDto(driver);
         }
 
         private static Infrastructure.Entities.Driver MapDtoToDriverEntity(DriverDto driverDto) =>

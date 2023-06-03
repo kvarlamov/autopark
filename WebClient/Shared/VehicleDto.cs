@@ -1,4 +1,6 @@
-﻿namespace WebClient.Shared
+﻿using System.Collections.Generic;
+
+namespace WebClient.Shared
 {
     public class VehicleDto
     {
@@ -33,6 +35,12 @@
         
         public string BrandName { get; set; }
         public long BrandId { get; set; }
+        
+        public long Enterprise { get; set; }
+        
+        public List<long> Drivers { get; set; } = new();
+
+        public long? ActiveDriver { get; set; }
     }
     
     public enum Transmission

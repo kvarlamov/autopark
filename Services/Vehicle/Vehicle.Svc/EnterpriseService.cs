@@ -59,6 +59,19 @@ namespace AutoPark.Svc
             return result;
         }
 
+        public async Task<EnterpriseDto> GetEnterpriseByIdAsync(long id)
+        {
+            var enterprise = await _db.Enterprises
+                .Include(e => e.Drivers)
+                .Include(e => e.Vehicles)
+                .Include(e => e.Managers)
+                .AsNoTracking()
+                .Where(x => x.Id == id)
+                .FirstOrDefaultAsync();
+
+            return MapEnterpriseEntityToDto(enterprise);
+        }
+
         public async Task<EnterpriseDto> GetEnterprise(long id)
         {
             var enterprise = await _db.Enterprises

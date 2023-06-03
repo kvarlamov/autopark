@@ -1,0 +1,87 @@
+﻿@page "/enterprise/{id:long}"
+@inject IJSRuntime JsRuntime
+@inject NavigationManager NavigationManager
+@inject HttpClient Http
+<h3>Enterprise</h3>
+
+@if (enterprise == null || vehicles == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <p>Name: @enterprise.Name</p>
+    <p>Name: @enterprise.City</p>
+    <p>Name: @enterprise.Code</p>
+    <p>Name: @enterprise.NumberOfStaff</p>
+    <br/>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Year of manufacture</th>
+            <th>Cost, $</th>
+            <th>Color</th>
+            <th>Milleage, km</th>
+            <th>Transmision</th>
+            <th>State</th>
+            <th>Brand Name</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var vehicle in vehicles)
+        {
+            <tr @key="@vehicle.Id" @onclick="() => NavigateToVehicle(vehicle.Id)">
+                <td>@vehicle.ManufactureYear</td>
+                <td>@vehicle.Cost</td>
+                <td>@vehicle.Color</td>
+                <td>@vehicle.Mileage</td>
+                <td>@vehicle.Transmission</td>
+                <td>@vehicle.VehicleState</td>
+                <td>@vehicle.BrandName</td>
+                <td style="display: none">@vehicle.BrandId</td>
+                <td><button @onclick="() => Remove(vehicle.Id)" @onclick:stopPropagation="true">REMOVE</button></td>
+            </tr>
+        }
+        </tbody>
+    </table>
+    <button @onclick="() => NavigateToVehicle(0)" @onclick:stopPropagation="true">Add New</button>
+}
+
+
+@code {
+    private EnterpriseDto enterprise;
+    
+    private List<VehicleDto> vehicles;
+
+    [Parameter]
+    public long Id { get; set; }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        enterprise = await Http.GetFromJsonAsync<EnterpriseDto>("enterprise/" + Id);
+
+        var vehiclesList = string.Join(',', enterprise.Vehicles);
+        vehicles = (await Http.GetFromJsonAsync<VehicleDto[]>($"vehicle/list?ids={vehiclesList}")).ToList();
+    }
+    
+    private void NavigateToVehicle(long? vehicleId)
+    {
+        NavigationManager.NavigateTo($"/vehicle/{vehicleId}/{enterprise.Id}");
+    }
+
+    private async Task Remove(long vehicleId)
+    {
+        var response = await Http.DeleteAsync("vehicle/" + vehicleId);
+        if (response.IsSuccessStatusCode)
+        {
+            enterprise = await Http.GetFromJsonAsync<EnterpriseDto>("enterprise/" + Id);
+            await JsRuntime.InvokeVoidAsync("alert", "Deleted Successfully!");
+            var vehiclesList = string.Join(',', enterprise.Vehicles);
+            vehicles = (await Http.GetFromJsonAsync<VehicleDto[]>($"vehicle/list?ids={vehiclesList}")).ToList();
+        }
+        
+        NavigationManager.NavigateTo($"enterprise/{enterprise.Id}");
+    }
+}
