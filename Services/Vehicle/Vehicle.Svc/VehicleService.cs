@@ -26,7 +26,7 @@ namespace AutoPark.Svc
             var vehicles = await _db.Vehicles
                 .Include(v => v.Brand)
                 .Include(v => v.ActiveDriver)
-                // .Include(v => v.Enterprise) // dont need to include because have long property
+                .Include(v => v.Enterprise) // dont need to include because have long property (if dont need additional properties)
                 .Include(v => v.Drivers)
                 .AsNoTracking()
                 .ToListAsync();
@@ -48,6 +48,7 @@ namespace AutoPark.Svc
                 .Include(v => v.Brand)
                 .Include(v => v.ActiveDriver)
                 .Include(v => v.Drivers)
+                .Include(v => v.Enterprise)
                 .AsNoTracking()
                 .Where(x => ids.Contains(x.Id))
                 .ToListAsync();
@@ -70,7 +71,9 @@ namespace AutoPark.Svc
                 .Include(v => v.Brand)
                 .Include(v => v.Drivers)
                 .Include(v => v.ActiveDriver)
-                .AsNoTracking().FirstOrDefaultAsync(v => v.Id == id);
+                .Include(v => v.Enterprise)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(v => v.Id == id);
             if (entity == null)
                 throw new Exception($"Vehicle with id {id} not found");
 
@@ -172,6 +175,7 @@ namespace AutoPark.Svc
                 .Include(v => v.Brand)
                 .Include(v => v.ActiveDriver)
                 .Include(v => v.Drivers)
+                .Include(v => v.Enterprise)
                 .AsNoTracking()
                 .Skip(skip)
                 .Take(take)
@@ -194,6 +198,10 @@ namespace AutoPark.Svc
             if (vehicle.Drivers is {Count: > 0})
                 drivers.AddRange(vehicle.Drivers.Select(x => x.Id));
 
+            var orderTime = vehicle.Enterprise.TimezoneOffset != null
+                ? vehicle.OrderTime.AddHours(vehicle.Enterprise.TimezoneOffset.Value)
+                : vehicle.OrderTime;
+
             return new VehicleDto
             {
                 Id = vehicle.Id,
@@ -207,7 +215,8 @@ namespace AutoPark.Svc
                 BrandId = vehicle.Brand.Id,
                 ActiveDriver = vehicle.ActiveDriver?.Id,
                 Drivers = drivers,
-                Enterprise = vehicle.EnterpriseId
+                Enterprise = vehicle.EnterpriseId,
+                OrderTime = orderTime
             };
         }
 
@@ -219,7 +228,8 @@ namespace AutoPark.Svc
                 Cost = dto.Cost,
                 Mileage = dto.Mileage,
                 ManufactureYear = dto.ManufactureYear,
-                Transmission = dto.Transmission
+                Transmission = dto.Transmission,
+                OrderTime = dto.OrderTime.ToUniversalTime()
             };
         
         private void UpdateEntityWithNewFields(Infrastructure.Entities.Vehicle existed, Infrastructure.Entities.Vehicle updated)

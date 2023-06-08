@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using AutoPark.Svc.Infrastructure.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -51,7 +52,8 @@ namespace AutoPark.Svc.Infrastructure.TestData
                 Mileage = 35000,
                 ManufactureYear = 2018,
                 Transmission = Transmission.Manual,
-                Brand = mersedes
+                Brand = mersedes,
+                OrderTime = GetOrderTime(50, 10, 3)
             };
 
             var vehicle2 = new Entities.Vehicle
@@ -62,7 +64,8 @@ namespace AutoPark.Svc.Infrastructure.TestData
                 Mileage = 25000,
                 ManufactureYear = 2019,
                 Transmission = Transmission.Automatic, 
-                Brand = kamaz
+                Brand = kamaz,
+                OrderTime = GetOrderTime(100, 20, 50)
             };
 
             var vehicle3 = new Entities.Vehicle
@@ -73,7 +76,8 @@ namespace AutoPark.Svc.Infrastructure.TestData
                 Mileage = 15000,
                 ManufactureYear = 2020,
                 Transmission = Transmission.Automatic,
-                Brand = mazda
+                Brand = mazda,
+                OrderTime = GetOrderTime(20, 10, 5)
             };
             
             var vehicle4 = new Entities.Vehicle
@@ -84,7 +88,43 @@ namespace AutoPark.Svc.Infrastructure.TestData
                 Mileage = 10000,
                 ManufactureYear = 2021,
                 Transmission = Transmission.Automatic,
-                Brand = mazda
+                Brand = mazda,
+                OrderTime = GetOrderTime(300, 5, 1)
+            };
+            
+            var vehicle5 = new Entities.Vehicle
+            {
+                Color = "Test1",
+                Cost = 35000,
+                VehicleState = VehicleState.Normal,
+                Mileage = 10000,
+                ManufactureYear = 2021,
+                Transmission = Transmission.Automatic,
+                Brand = mazda,
+                OrderTime = GetOrderTime(600, 25, 41)
+            };
+            
+            var vehicle6 = new Entities.Vehicle
+            {
+                Color = "Test2",
+                Cost = 35000,
+                VehicleState = VehicleState.Normal,
+                Mileage = 10000,
+                ManufactureYear = 2021,
+                Transmission = Transmission.Automatic,
+                Brand = mazda,
+                OrderTime = GetOrderTime(640, 15, 1)
+            };
+            var vehicle7 = new Entities.Vehicle
+            {
+                Color = "Test3",
+                Cost = 35000,
+                VehicleState = VehicleState.Normal,
+                Mileage = 10000,
+                ManufactureYear = 2021,
+                Transmission = Transmission.Automatic,
+                Brand = mazda,
+                OrderTime = GetOrderTime(640, 15, 1)
             };
             // _db.Vehicles.AddRange(vehicle1, vehicle2, vehicle3);
 
@@ -149,7 +189,8 @@ namespace AutoPark.Svc.Infrastructure.TestData
                 Name = "Stroy Invest",
                 City = "Kaliningrad",
                 Code = 112005,
-                NumberOfStaff = 1_000
+                NumberOfStaff = 1_000,
+                TimezoneOffset = 1
             };
             enterprise1.Vehicles.AddRange(new []{vehicle1, vehicle2});
             enterprise1.Drivers.AddRange(new []{driver1, driver2});
@@ -161,7 +202,8 @@ namespace AutoPark.Svc.Infrastructure.TestData
                 Name = "Garaj Rent",
                 City = "Moskow",
                 Code = 715105,
-                NumberOfStaff = 10_000
+                NumberOfStaff = 10_000,
+                TimezoneOffset = 3
             };
             enterprise2.Vehicles.Add(vehicle3);
             enterprise2.Drivers.Add(driver3);
@@ -173,7 +215,8 @@ namespace AutoPark.Svc.Infrastructure.TestData
                 Name = "Arenda avto",
                 City = "Novgorod",
                 Code = 377005,
-                NumberOfStaff = 500
+                NumberOfStaff = 500,
+                TimezoneOffset = 2
             };
             enterprise3.Vehicles.Add(vehicle4);
             enterprise3.Managers.Add(manager2);
@@ -183,13 +226,14 @@ namespace AutoPark.Svc.Infrastructure.TestData
                 Name = "Test enterprise1",
                 City = "Vladivostok",
                 Code = 278105,
-                NumberOfStaff = 1500
+                NumberOfStaff = 1500,
+                TimezoneOffset = 10
             };
             
             var enterprise5 = new Entities.Enterprise
             {
                 Name = "Test enterprise2",
-                City = "Murmansk",
+                City = "London",
                 Code = 971505,
                 NumberOfStaff = 1200
             };
@@ -197,13 +241,17 @@ namespace AutoPark.Svc.Infrastructure.TestData
             var enterprise6 = new Entities.Enterprise
             {
                 Name = "Test enterprise3",
-                City = "Chelyabinsk",
+                City = "StrangePlace",
                 Code = 325691,
-                NumberOfStaff = 200
+                NumberOfStaff = 200,
+                TimezoneOffset = -1
             };
             enterprise4.Managers.AddRange(new []{manager1, manager2});
+            enterprise4.Vehicles.Add(vehicle5);
             enterprise5.Managers.AddRange(new []{manager1, manager2});
+            enterprise5.Vehicles.Add(vehicle6);
             enterprise6.Managers.AddRange(new []{manager1, manager2});
+            enterprise6.Vehicles.Add(vehicle7);
             
             _db.Enterprises.AddRange(enterprise1, enterprise2, enterprise3, enterprise4, enterprise5, enterprise6);
 
@@ -220,6 +268,12 @@ namespace AutoPark.Svc.Infrastructure.TestData
             // // Активный водитель может работать только на одной машине (не может быть назначен активным на второй автомобиль).
             // vehicle2.ActiveDriver = driver1;
             // _db.SaveChanges();
+        }
+
+        private static DateTimeOffset GetOrderTime(int days, int hours, int minutes)
+        {
+            return DateTimeOffset.Now;
+            return DateTimeOffset.Now - TimeSpan.FromDays(days)- TimeSpan.FromHours(hours) - TimeSpan.FromMinutes(minutes);
         }
     }
     
@@ -255,7 +309,25 @@ namespace AutoPark.Svc.Infrastructure.TestData
                     Mileage = 15000,
                     ManufactureYear = 2020,
                     Transmission = Transmission.Automatic
-                }
+                },
+                new Entities.Vehicle()
+                {
+                    Color = "Test1",
+                    Cost = 40000,
+                    VehicleState = VehicleState.Normal,
+                    Mileage = 15000,
+                    ManufactureYear = 2010,
+                    Transmission = Transmission.Automatic
+                },
+                new Entities.Vehicle()
+                {
+                    Color = "Test2",
+                    Cost = 40000,
+                    VehicleState = VehicleState.Normal,
+                    Mileage = 15000,
+                    ManufactureYear = 2010,
+                    Transmission = Transmission.Automatic
+                },
             };
     }  
 }

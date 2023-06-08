@@ -26,6 +26,10 @@
         <InputText id="onvehicle" @bind-Value="@activeDriver.Name"/>
     </p>
     <p>
+        Order Date:<br />
+        <InputDate id="orderTimeDate" TValue="DateTimeOffset" @bind-Value="@DateSelected" />
+    </p>
+    <p>
         Free drivers:<br/>
         <InputSelect name="FreeDriverId" @bind-Value="@drivers">
             @foreach (var driver in drivers)
@@ -86,6 +90,10 @@
     List<DriverSimpleDto> drivers = new();
 
     DriverSimpleDto activeDriver { get; set; } = new();
+    
+    DateTimeOffset DateSelected { get; set; }  = DateTimeOffset.MinValue;
+
+    TimeSpan TimeSelected { get; set; } = TimeSpan.Zero;
 
     protected override async Task OnInitializedAsync()
     {
@@ -99,7 +107,7 @@
         
         brands = await Http.GetFromJsonAsync<List<BrandSimpleDto>>("vehicle/brand");
 
-        if (vehicle.ActiveDriver != null)`
+        if (vehicle.ActiveDriver != null)
             activeDriver = await Http.GetFromJsonAsync<DriverSimpleDto>($"driver/" + vehicle.ActiveDriver.Value);
 
         var driverList = string.Join(",", vehicle.Drivers);
@@ -111,6 +119,9 @@
         HttpResponseMessage response;
         if (vehicle.BrandId == 0)
             vehicle.BrandId = brands.FirstOrDefault()?.Id ?? 0;
+
+        // Combine the selected date and time into a single DateTimeOffset object
+        vehicle.OrderTime = DateTimeOffset.UtcNow;
         
         if (Id != 0)
             response = await Http.PutAsJsonAsync("vehicle", vehicle);

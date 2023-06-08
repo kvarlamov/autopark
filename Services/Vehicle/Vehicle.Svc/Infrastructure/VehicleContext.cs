@@ -15,6 +15,10 @@ namespace AutoPark.Svc.Infrastructure
         public DbSet<Entities.Enterprise> Enterprises { get; set; }
         // public DbSet<ManagerEnterprises> ManagerEnterprises { get; set; }
 
+        public DbSet<TrackPoint> TrackPoints { get; set; }
+
+        public DbSet<TrackPointLast> TrackPointLast { get; set; }
+
         public VehicleContext(DbContextOptions<VehicleContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -40,6 +44,18 @@ namespace AutoPark.Svc.Infrastructure
                 .HasMany(m => m.Enterprises)
                 .WithMany(e => e.Managers)
                 .UsingEntity(j => j.ToTable("ManagerEnterprises"));
+
+            modelBuilder.Entity<TrackPoint>()
+                .HasOne(e => e.Vehicle)
+                .WithMany(v => v.TrackPoints)
+                .HasForeignKey(v => v.VehicleId);
+            
+            //todo - уточнить нужно ли добавлять индекс если у нас внешний ключ
+
+            modelBuilder.Entity<Entities.Vehicle>()
+                .HasOne(e => e.TrackPointLast)
+                .WithOne(e => e.Vehicle)
+                .HasForeignKey<Entities.TrackPointLast>(v => v.VehicleId);
             
             base.OnModelCreating(modelBuilder);
         }

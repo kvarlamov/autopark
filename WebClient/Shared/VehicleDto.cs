@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace WebClient.Shared
 {
@@ -41,6 +42,8 @@ namespace WebClient.Shared
         public List<long> Drivers { get; set; } = new();
 
         public long? ActiveDriver { get; set; }
+        
+        public DateTimeOffset OrderTime { get; set; }
     }
     
     public enum Transmission

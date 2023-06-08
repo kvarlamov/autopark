@@ -20,6 +20,7 @@ namespace Vehicle.Api.Module.Tools
             services.AddScoped<IDriverService, DriverService>();
             services.AddScoped<IManagerService, ManagerService>();
             services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<ITrackPointService, TrackPointService>();
         }
     }
 }

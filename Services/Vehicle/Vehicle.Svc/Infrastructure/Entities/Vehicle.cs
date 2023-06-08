@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using BaseTypes;
+using Vehicle.Contract.Dto;
 using Vehicle.Contract.Enums;
 
 namespace AutoPark.Svc.Infrastructure.Entities
@@ -53,5 +55,11 @@ namespace AutoPark.Svc.Infrastructure.Entities
         /// Active driver for current vehicle, null if there no active driver
         /// </summary>
         public Driver? ActiveDriver { get; set; }
+        
+        public DateTimeOffset OrderTime { get; set; }
+
+        public List<TrackPoint> TrackPoints { get; set; } = new();
+
+        public TrackPointLast TrackPointLast { get; set; }
     }
 }

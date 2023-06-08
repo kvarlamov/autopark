@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using BaseTypes;
 
 namespace AutoPark.Svc.Infrastructure.Entities
@@ -18,5 +19,6 @@ namespace AutoPark.Svc.Infrastructure.Entities
         public List<Driver> Drivers { get; set; } = new();
 
         public List<Manager> Managers { get; set; } = new();
+        public int? TimezoneOffset { get; set; }
     }
 }

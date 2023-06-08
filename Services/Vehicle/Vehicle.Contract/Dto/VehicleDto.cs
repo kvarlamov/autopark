@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using BaseTypes;
 using Vehicle.Contract.Enums;
 
@@ -41,5 +42,7 @@ namespace Vehicle.Contract.Dto
         public long? ActiveDriver { get; set; }
         
         public long Enterprise { get; set; }
+        
+        public DateTimeOffset OrderTime { get; set; }
     }
 }
