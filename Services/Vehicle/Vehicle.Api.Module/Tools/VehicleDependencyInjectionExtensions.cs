@@ -4,6 +4,7 @@ using Driver.Contract;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Vehicle.Contract;
 
 namespace Vehicle.Api.Module.Tools
@@ -12,7 +13,14 @@ namespace Vehicle.Api.Module.Tools
     {
         public static void AddVehicleDependencies(this IServiceCollection services, IConfiguration config)
         {
-            services.AddDbContext<VehicleContext>(options => options.UseNpgsql(config.GetConnectionString("AutoParkDB")));
+            services.AddDbContext<VehicleContext>(options =>
+            {
+                options.UseNpgsql(config.GetConnectionString("AutoParkDB"));
+                options.UseLoggerFactory(LoggerFactory.Create(builder =>
+                {
+                    builder.AddConsole();
+                })).EnableSensitiveDataLogging();
+            });
 
             // Add Services
             services.AddScoped<IVehicleService, VehicleService>();

@@ -14,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Vehicle.Api.Module.Tools;
 using Vehicle.Contract;
@@ -83,6 +84,13 @@ namespace AutoPark.Api
                     Policies.IsManager,
                     policy => policy.AddRequirements(new IsManagerRequirement())
                     );
+            });
+            
+            // Add logging services
+            services.AddLogging(builder =>
+            {
+                builder.AddConsole(); // Log to the console
+                builder.AddDebug(); // Log to the debug output window
             });
 
             // Add Identity

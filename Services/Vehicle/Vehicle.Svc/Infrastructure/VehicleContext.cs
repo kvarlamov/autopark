@@ -2,11 +2,16 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 
 namespace AutoPark.Svc.Infrastructure
 {
     public class VehicleContext : IdentityDbContext<Manager, IdentityRole<long>, long>
     {
+        //static LoggerFactory object
+        public static readonly ILoggerFactory loggerFactory = new LoggerFactory();
+        
         public DbSet<AutoPark.Svc.Infrastructure.Entities.Vehicle> Vehicles { get; set; }
         public DbSet<Brand> Brands { get; set; }
         
@@ -16,8 +21,6 @@ namespace AutoPark.Svc.Infrastructure
         // public DbSet<ManagerEnterprises> ManagerEnterprises { get; set; }
 
         public DbSet<TrackPoint> TrackPoints { get; set; }
-
-        public DbSet<TrackPointLast> TrackPointLast { get; set; }
 
         public VehicleContext(DbContextOptions<VehicleContext> options) : base(options) { }
 
@@ -51,11 +54,6 @@ namespace AutoPark.Svc.Infrastructure
                 .HasForeignKey(v => v.VehicleId);
             
             //todo - уточнить нужно ли добавлять индекс если у нас внешний ключ
-
-            modelBuilder.Entity<Entities.Vehicle>()
-                .HasOne(e => e.TrackPointLast)
-                .WithOne(e => e.Vehicle)
-                .HasForeignKey<Entities.TrackPointLast>(v => v.VehicleId);
             
             base.OnModelCreating(modelBuilder);
         }

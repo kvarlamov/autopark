@@ -44,5 +44,7 @@ namespace Vehicle.Contract.Dto
         public long Enterprise { get; set; }
         
         public DateTimeOffset OrderTime { get; set; }
+        
+        public long? CurrentTrackPoint { get; set; }
     }
 }

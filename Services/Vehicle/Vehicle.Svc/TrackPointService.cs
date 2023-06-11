@@ -19,73 +19,107 @@ namespace AutoPark.Svc
             _db = db;
         }
         
-        public async Task<List<TrackPointDto>> GetTrackPointForVehicle(long vehicleId)
+        public async Task<List<TrackPointDto>> GetTrackPointForVehicle(TrackRequestDto request)
         {
-            var resultEntities = await _db.TrackPoints.AsNoTracking().Where(x => x.VehicleId == vehicleId).ToArrayAsync();
+            //todo - need to add to service returning of offset
+            var vehicle = await _db.Vehicles
+                .AsNoTracking()
+                .Include(x => x.Enterprise)
+                .FirstAsync(x => x.Id == request.VehicleId);
 
-            var result = new List<TrackPointDto>();
-            foreach (var entity in resultEntities)
+            var enterpriseOffset = vehicle.Enterprise.TimezoneOffset ?? 0;
+
+            var resultEntities = _db.TrackPoints
+                .AsNoTracking()
+                .Where(x => x.VehicleId == request.VehicleId);
+
+            if (request.From != null)
             {
-                result.Add(MapEntityToDto(entity));
+                request.From = request.From.Value.AddHours(-enterpriseOffset);
+                resultEntities = resultEntities.Where(x => x.TrackTime >= request.From.Value);
             }
 
-            return result;
+            if (request.To != null)
+            {
+                request.To = request.To.Value.AddHours(-enterpriseOffset);
+                resultEntities = resultEntities.Where(x => x.TrackTime <=request.To.Value);
+            }
+
+            var result = await resultEntities.Include(x => x.Vehicle)
+                .ThenInclude(v => v.Enterprise)
+                .ToArrayAsync();
+
+            var list = new List<TrackPointDto>();
+            foreach (var entity in result)
+                list.Add(MapEntityToDto(entity));
+
+            return list;
         }
 
         public async Task<TrackPointDto> GetActualTrackPointForVehicle(long vehicleId)
         {
-            var result = await _db.TrackPointLast.FirstOrDefaultAsync(x => x.VehicleId == vehicleId);
+            var result = await _db.TrackPoints
+                .AsNoTracking()
+                .Where(x => x.VehicleId == vehicleId)
+                .OrderByDescending(x => x.TrackTime)
+                .Include(x => x.Vehicle)
+                .ThenInclude(v => v.Enterprise)
+                .FirstOrDefaultAsync();
 
             return MapEntityToDto(result);
         }
 
         public async Task<TrackPointDto> CreateTrackPoint(long vehicleId)
         {
+            var vehicle = await _db.Vehicles
+                .AsNoTracking()
+                .Include(x => x.Enterprise)
+                .FirstOrDefaultAsync(x => x.Id == vehicleId);
+            
             var newTrackPoint = new TrackPoint
             {
-                VehicleId = vehicleId,
-                TrackTime = DateTimeOffset.UtcNow
+                VehicleId = vehicle.Id,
+                TrackTime = DateTimeOffset.Now
             };
 
-            var existedLast = await _db.TrackPointLast.SingleOrDefaultAsync(x => x.VehicleId == vehicleId);
-            if (existedLast != null)
-            {
-                existedLast.TrackTime = newTrackPoint.TrackTime;
-            }
-            else
-            {
-                _db.TrackPointLast.Add(new TrackPointLast()
-                {
-                    VehicleId = vehicleId,
-                    TrackTime = newTrackPoint.TrackTime
-                });
-            }
-
+            newTrackPoint.Latitude = GetRandomLatitude().ToString();
+            newTrackPoint.Longitude = GetRandomLongitude().ToString();
+            
             _db.TrackPoints.Add(newTrackPoint);
 
             await _db.SaveChangesAsync();
+
+            newTrackPoint.Vehicle = vehicle;
 
             return MapEntityToDto(newTrackPoint);
         }
 
         private TrackPointDto MapEntityToDto(TrackPoint entity)
         {
+            var trackTime = entity.Vehicle.Enterprise.TimezoneOffset != null
+                ? entity.TrackTime.AddHours(entity.Vehicle.Enterprise.TimezoneOffset.Value)
+                : entity.TrackTime;
+            
             return new TrackPointDto()
             {
                 Id = entity.Id,
-                TrackTime = entity.TrackTime,
+                TrackTime = trackTime,
+                Latitude = entity.Latitude,
+                Longitude = entity.Longitude,
                 VehicleId = entity.VehicleId
             };
         }
         
-        private TrackPointDto MapEntityToDto(TrackPointLast entity)
+        private static readonly Random random = new Random();
+
+        public static double GetRandomLongitude(double minLongitude = -180, double maxLongitude = 180)
         {
-            return new TrackPointDto()
-            {
-                Id = entity.Id,
-                TrackTime = entity.TrackTime,
-                VehicleId = entity.VehicleId
-            };
+            return random.NextDouble() * (maxLongitude - minLongitude) + minLongitude;
+        }
+
+        public static double GetRandomLatitude(double minLatitude = -90, double maxLatitude = 90)
+        {
+            return random.NextDouble() * (maxLatitude - minLatitude) + minLatitude;
         }
     }
 }

@@ -72,6 +72,7 @@ namespace AutoPark.Svc
                 .Include(v => v.Drivers)
                 .Include(v => v.ActiveDriver)
                 .Include(v => v.Enterprise)
+                .Include(v => v.TrackPoints)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(v => v.Id == id);
             if (entity == null)
@@ -176,6 +177,7 @@ namespace AutoPark.Svc
                 .Include(v => v.ActiveDriver)
                 .Include(v => v.Drivers)
                 .Include(v => v.Enterprise)
+                .Include(v => v.TrackPoints)
                 .AsNoTracking()
                 .Skip(skip)
                 .Take(take)
@@ -198,6 +200,10 @@ namespace AutoPark.Svc
             if (vehicle.Drivers is {Count: > 0})
                 drivers.AddRange(vehicle.Drivers.Select(x => x.Id));
 
+            long? currentpoint = null;
+            if (vehicle.TrackPoints is {Count: > 0})
+                currentpoint = vehicle.TrackPoints.OrderBy(x => x.TrackTime).Last().Id;
+
             var orderTime = vehicle.Enterprise.TimezoneOffset != null
                 ? vehicle.OrderTime.AddHours(vehicle.Enterprise.TimezoneOffset.Value)
                 : vehicle.OrderTime;
@@ -216,7 +222,8 @@ namespace AutoPark.Svc
                 ActiveDriver = vehicle.ActiveDriver?.Id,
                 Drivers = drivers,
                 Enterprise = vehicle.EnterpriseId,
-                OrderTime = orderTime
+                OrderTime = orderTime,
+                CurrentTrackPoint = currentpoint
             };
         }
 
