@@ -2,7 +2,7 @@
 
 namespace Vehicle.Contract.Dto
 {
-    public class TrackRequestDto
+    public class TrackPointRequestDto
     {
         public long VehicleId { get; set; }
 

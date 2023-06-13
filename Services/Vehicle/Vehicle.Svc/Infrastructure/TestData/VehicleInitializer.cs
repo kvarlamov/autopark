@@ -255,6 +255,116 @@ namespace AutoPark.Svc.Infrastructure.TestData
             
             _db.Enterprises.AddRange(enterprise1, enterprise2, enterprise3, enterprise4, enterprise5, enterprise6);
 
+            Trip trip1 = new Trip()
+            {
+                Vehicle = vehicle6,
+                StartTime = GetTripTime(30),
+                EndTime = null
+            };
+
+            Trip trip2 = new Trip()
+            {
+                Vehicle = vehicle6,
+                StartTime = GetTripTime(29, 5),
+                EndTime = GetTripTime(19, 4)
+            };
+            
+            Trip trip3 = new Trip()
+            {
+                Vehicle = vehicle6,
+                StartTime = GetTripTime(20, 1, 5),
+                EndTime = GetTripTime(10, 5, 1)
+            };
+            
+            Trip trip4 = new Trip()
+            {
+                Vehicle = vehicle6,
+                StartTime = GetTripTime(10, 1, 5),
+                EndTime = null,
+            };
+            
+            Trip trip5 = new Trip()
+            {
+                Vehicle = vehicle6,
+                StartTime = GetTripTime(1, 1, 5),
+                EndTime = GetTripTime(0, 5, 7),
+            };
+            
+            TrackPoint point1 = new TrackPoint()
+            {
+                Vehicle = vehicle6,
+                TrackTime = GetTripTime(40),
+                Latitude = TrackPointService.GetRandomLatitude().ToString(),
+                Longitude = TrackPointService.GetRandomLongitude().ToString(),
+            };
+            
+            TrackPoint point2 = new TrackPoint()
+            {
+                Vehicle = vehicle6,
+                TrackTime = GetTripTime(20),
+                Latitude = TrackPointService.GetRandomLatitude().ToString(),
+                Longitude = TrackPointService.GetRandomLongitude().ToString(),
+            };
+            
+            TrackPoint point3 = new TrackPoint()
+            {
+                Vehicle = vehicle6,
+                TrackTime = GetTripTime(6),
+                Latitude = TrackPointService.GetRandomLatitude().ToString(),
+                Longitude = TrackPointService.GetRandomLongitude().ToString(),
+            };
+            
+            TrackPoint point4 = new TrackPoint()
+            {
+                Vehicle = vehicle6,
+                TrackTime = GetTripTime(19),
+                Latitude = TrackPointService.GetRandomLatitude().ToString(),
+                Longitude = TrackPointService.GetRandomLongitude().ToString(),
+            };
+            
+            TrackPoint point5 = new TrackPoint()
+            {
+                Vehicle = vehicle6,
+                TrackTime = GetTripTime(1),
+                Latitude = TrackPointService.GetRandomLatitude().ToString(),
+                Longitude = TrackPointService.GetRandomLongitude().ToString(),
+            };
+            
+            TrackPoint point6 = new TrackPoint()
+            {
+                Vehicle = vehicle6,
+                TrackTime = GetFutureTripTime(10),
+                Latitude = TrackPointService.GetRandomLatitude().ToString(),
+                Longitude = TrackPointService.GetRandomLongitude().ToString(),
+            };
+            
+            TrackPoint point7 = new TrackPoint()
+            {
+                Vehicle = vehicle6,
+                TrackTime = GetFutureTripTime(2),
+                Latitude = TrackPointService.GetRandomLatitude().ToString(),
+                Longitude = TrackPointService.GetRandomLongitude().ToString(),
+            };
+            
+            TrackPoint point8 = new TrackPoint()
+            {
+                Vehicle = vehicle6,
+                TrackTime = GetFutureTripTime(8),
+                Latitude = TrackPointService.GetRandomLatitude().ToString(),
+                Longitude = TrackPointService.GetRandomLongitude().ToString(),
+            };
+            
+            TrackPoint point9 = new TrackPoint()
+            {
+                Vehicle = vehicle6,
+                TrackTime = GetTripTime(8),
+                Latitude = TrackPointService.GetRandomLatitude().ToString(),
+                Longitude = TrackPointService.GetRandomLongitude().ToString(),
+            };
+            
+            _db.Trips.AddRange(trip1, trip2, trip3, trip4, trip5);
+            _db.TrackPoints.AddRange(point1, point2, point3, point4, point5, point6, point7, point8, point9);
+
             _db.SaveChanges();
             
             // // Автомобиль и водитель могут принадлежать только одному предприятию.
@@ -274,6 +384,16 @@ namespace AutoPark.Svc.Infrastructure.TestData
         {
             return DateTimeOffset.Now;
             return DateTimeOffset.Now - TimeSpan.FromDays(days)- TimeSpan.FromHours(hours) - TimeSpan.FromMinutes(minutes);
+        }
+        
+        private static DateTimeOffset GetTripTime(int? days = null, int? hours = null, int? minutes = null)
+        {
+            return DateTimeOffset.Now - TimeSpan.FromDays(days??0)- TimeSpan.FromHours(hours??0) - TimeSpan.FromMinutes(minutes??0);
+        }
+        
+        private static DateTimeOffset GetFutureTripTime(int? days = null, int? hours = null, int? minutes = null)
+        {
+            return DateTimeOffset.Now + TimeSpan.FromDays(days??0) + TimeSpan.FromHours(hours??0) + TimeSpan.FromMinutes(minutes??0);
         }
     }
     

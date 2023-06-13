@@ -1,11 +1,10 @@
 ﻿using System;
+using BaseTypes;
 
 namespace AutoPark.Svc.Infrastructure.Entities
 {
-    public class TrackPoint
+    public class TrackPoint : BaseEntity
     {
-        public long Id { get; set; }
-        
         public string Latitude { get; set; }
         
         public string Longitude { get; set; }

@@ -22,6 +22,8 @@ namespace AutoPark.Svc.Infrastructure
 
         public DbSet<TrackPoint> TrackPoints { get; set; }
 
+        public DbSet<Trip> Trips { get; set; }
+
         public VehicleContext(DbContextOptions<VehicleContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -51,6 +53,11 @@ namespace AutoPark.Svc.Infrastructure
             modelBuilder.Entity<TrackPoint>()
                 .HasOne(e => e.Vehicle)
                 .WithMany(v => v.TrackPoints)
+                .HasForeignKey(v => v.VehicleId);
+            
+            modelBuilder.Entity<Trip>()
+                .HasOne(e => e.Vehicle)
+                .WithMany(v => v.Trips)
                 .HasForeignKey(v => v.VehicleId);
             
             //todo - уточнить нужно ли добавлять индекс если у нас внешний ключ

@@ -19,30 +19,30 @@ namespace AutoPark.Svc
             _db = db;
         }
         
-        public async Task<List<TrackPointDto>> GetTrackPointForVehicle(TrackRequestDto request)
+        public async Task<List<TrackPointDto>> GetTrackPointForVehicle(TrackPointRequestDto pointRequest)
         {
             //todo - need to add to service returning of offset
             var vehicle = await _db.Vehicles
                 .AsNoTracking()
                 .Include(x => x.Enterprise)
-                .FirstAsync(x => x.Id == request.VehicleId);
+                .FirstAsync(x => x.Id == pointRequest.VehicleId);
 
             var enterpriseOffset = vehicle.Enterprise.TimezoneOffset ?? 0;
 
             var resultEntities = _db.TrackPoints
                 .AsNoTracking()
-                .Where(x => x.VehicleId == request.VehicleId);
+                .Where(x => x.VehicleId == pointRequest.VehicleId);
 
-            if (request.From != null)
+            if (pointRequest.From != null)
             {
-                request.From = request.From.Value.AddHours(-enterpriseOffset);
-                resultEntities = resultEntities.Where(x => x.TrackTime >= request.From.Value);
+                pointRequest.From = pointRequest.From.Value.AddHours(-enterpriseOffset);
+                resultEntities = resultEntities.Where(x => x.TrackTime >= pointRequest.From.Value);
             }
 
-            if (request.To != null)
+            if (pointRequest.To != null)
             {
-                request.To = request.To.Value.AddHours(-enterpriseOffset);
-                resultEntities = resultEntities.Where(x => x.TrackTime <=request.To.Value);
+                pointRequest.To = pointRequest.To.Value.AddHours(-enterpriseOffset);
+                resultEntities = resultEntities.Where(x => x.TrackTime <=pointRequest.To.Value);
             }
 
             var result = await resultEntities.Include(x => x.Vehicle)
@@ -94,7 +94,7 @@ namespace AutoPark.Svc
             return MapEntityToDto(newTrackPoint);
         }
 
-        private TrackPointDto MapEntityToDto(TrackPoint entity)
+        public static TrackPointDto MapEntityToDto(TrackPoint entity)
         {
             var trackTime = entity.Vehicle.Enterprise.TimezoneOffset != null
                 ? entity.TrackTime.AddHours(entity.Vehicle.Enterprise.TimezoneOffset.Value)

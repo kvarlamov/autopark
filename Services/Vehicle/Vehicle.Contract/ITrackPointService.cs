@@ -6,7 +6,7 @@ namespace Vehicle.Contract
 {
     public interface ITrackPointService
     {
-        public Task<List<TrackPointDto>> GetTrackPointForVehicle(TrackRequestDto vehicleId);
+        public Task<List<TrackPointDto>> GetTrackPointForVehicle(TrackPointRequestDto vehicleId);
         
         public Task<TrackPointDto> GetActualTrackPointForVehicle(long vehicleId);
 

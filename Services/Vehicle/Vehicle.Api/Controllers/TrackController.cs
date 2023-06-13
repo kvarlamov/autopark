@@ -23,11 +23,11 @@ namespace AutoPark.Api.Controllers
         }
         
         [HttpGet]
-        public async Task<IActionResult> GetTrackPointForVehicle([FromQuery]TrackRequestDto request)
+        public async Task<IActionResult> GetTrackPointForVehicle([FromQuery]TrackPointRequestDto pointRequest)
         {
-            var result = await _trackPointService.GetTrackPointForVehicle(request);
+            var result = await _trackPointService.GetTrackPointForVehicle(pointRequest);
 
-            if (request.UseGeoJson)
+            if (pointRequest.UseGeoJson)
             {
                 return MapResultToGeoJson(result);
             }

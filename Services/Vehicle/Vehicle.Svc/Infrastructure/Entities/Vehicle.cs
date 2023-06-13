@@ -59,5 +59,7 @@ namespace AutoPark.Svc.Infrastructure.Entities
         public DateTimeOffset OrderTime { get; set; }
 
         public List<TrackPoint> TrackPoints { get; set; } = new();
+
+        public List<Trip> Trips { get; set; }
     }
 }
