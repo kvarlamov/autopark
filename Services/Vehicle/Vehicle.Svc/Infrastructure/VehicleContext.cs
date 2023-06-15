@@ -59,6 +59,11 @@ namespace AutoPark.Svc.Infrastructure
                 .HasOne(e => e.Vehicle)
                 .WithMany(v => v.Trips)
                 .HasForeignKey(v => v.VehicleId);
+
+            modelBuilder.Entity<TrackPoint>()
+                .HasOne(t => t.Trip)
+                .WithMany(t => t.Points)
+                .HasForeignKey(t => t.TripId);
             
             //todo - уточнить нужно ли добавлять индекс если у нас внешний ключ
             

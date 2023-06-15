@@ -14,5 +14,9 @@ namespace AutoPark.Svc.Infrastructure.Entities
         public long VehicleId { get; set; }
 
         public Vehicle Vehicle { get; set; }
+        
+        public long TripId { get; set; }
+        
+        public Trip Trip { get; set; }
     }
 }

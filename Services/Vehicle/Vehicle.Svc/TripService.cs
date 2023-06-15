@@ -21,18 +21,14 @@ namespace AutoPark.Svc
         public async Task<List<TrackPointDto>> GetTripsTrackPointsAsync(TripRequestDto request)
         {
             var (vehicleId, startTime, endTime) = request;
-            if (startTime == null)
-                startTime = DateTimeOffset.MinValue;
-            
-            if (endTime == null)
-                endTime = DateTimeOffset.MaxValue;
+            startTime ??= DateTimeOffset.MinValue;
+            endTime ??= DateTimeOffset.MaxValue;
 
             var tripsTrackPoints = await _db.Trips
                 .AsNoTracking()    
                 .Where(x => x.VehicleId == vehicleId && (x.StartTime >= startTime && x.EndTime <= endTime))
-                .Include(x => x.Vehicle)
-                .ThenInclude(v => v.TrackPoints)
-                .SelectMany(x => x.Vehicle.TrackPoints)
+                .Include(x => x.Points)
+                .SelectMany(x => x.Points)
                 .Distinct()
                 .Where(x => x.TrackTime >= startTime && x.TrackTime <= endTime)
                 .Include(x => x.Vehicle)

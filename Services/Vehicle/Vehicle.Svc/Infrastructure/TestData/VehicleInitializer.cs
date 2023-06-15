@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using AutoPark.Svc.Infrastructure.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -9,11 +10,11 @@ namespace AutoPark.Svc.Infrastructure.TestData
 {
     public sealed class VehicleInitializer
     {
-        public static void Initialize(VehicleContext _db, UserManager<Manager> userManager, RoleManager<IdentityRole<long>> roleManager)
+        public static void Initialize(VehicleContext db, UserManager<Manager> userManager, RoleManager<IdentityRole<long>> roleManager)
         {
-            DatabaseFacade db = _db.Database;
-            db.EnsureDeleted();
-            db.EnsureCreated();
+            DatabaseFacade database = db.Database;
+            database.EnsureDeleted();
+            database.EnsureCreated();
 
             Brand mersedes = new Brand
             {
@@ -253,7 +254,7 @@ namespace AutoPark.Svc.Infrastructure.TestData
             enterprise6.Managers.AddRange(new []{manager1, manager2});
             enterprise6.Vehicles.Add(vehicle7);
             
-            _db.Enterprises.AddRange(enterprise1, enterprise2, enterprise3, enterprise4, enterprise5, enterprise6);
+            db.Enterprises.AddRange(enterprise1, enterprise2, enterprise3, enterprise4, enterprise5, enterprise6);
 
             Trip trip1 = new Trip()
             {
@@ -290,82 +291,15 @@ namespace AutoPark.Svc.Infrastructure.TestData
                 EndTime = GetTripTime(0, 5, 7),
             };
             
-            TrackPoint point1 = new TrackPoint()
-            {
-                Vehicle = vehicle6,
-                TrackTime = GetTripTime(40),
-                Latitude = TrackPointService.GetRandomLatitude().ToString(),
-                Longitude = TrackPointService.GetRandomLongitude().ToString(),
-            };
+            trip1.Points.AddRange(GetTrackPointsForTrip(trip1, vehicle6));
+            trip2.Points.AddRange(GetTrackPointsForTrip(trip2, vehicle6, 3));
+            trip3.Points.AddRange(GetTrackPointsForTrip(trip3, vehicle6, 4));
+            trip4.Points.AddRange(GetTrackPointsForTrip(trip4, vehicle6));
+            trip5.Points.AddRange(GetTrackPointsForTrip(trip5, vehicle6));
             
-            TrackPoint point2 = new TrackPoint()
-            {
-                Vehicle = vehicle6,
-                TrackTime = GetTripTime(20),
-                Latitude = TrackPointService.GetRandomLatitude().ToString(),
-                Longitude = TrackPointService.GetRandomLongitude().ToString(),
-            };
-            
-            TrackPoint point3 = new TrackPoint()
-            {
-                Vehicle = vehicle6,
-                TrackTime = GetTripTime(6),
-                Latitude = TrackPointService.GetRandomLatitude().ToString(),
-                Longitude = TrackPointService.GetRandomLongitude().ToString(),
-            };
-            
-            TrackPoint point4 = new TrackPoint()
-            {
-                Vehicle = vehicle6,
-                TrackTime = GetTripTime(19),
-                Latitude = TrackPointService.GetRandomLatitude().ToString(),
-                Longitude = TrackPointService.GetRandomLongitude().ToString(),
-            };
-            
-            TrackPoint point5 = new TrackPoint()
-            {
-                Vehicle = vehicle6,
-                TrackTime = GetTripTime(1),
-                Latitude = TrackPointService.GetRandomLatitude().ToString(),
-                Longitude = TrackPointService.GetRandomLongitude().ToString(),
-            };
-            
-            TrackPoint point6 = new TrackPoint()
-            {
-                Vehicle = vehicle6,
-                TrackTime = GetFutureTripTime(10),
-                Latitude = TrackPointService.GetRandomLatitude().ToString(),
-                Longitude = TrackPointService.GetRandomLongitude().ToString(),
-            };
-            
-            TrackPoint point7 = new TrackPoint()
-            {
-                Vehicle = vehicle6,
-                TrackTime = GetFutureTripTime(2),
-                Latitude = TrackPointService.GetRandomLatitude().ToString(),
-                Longitude = TrackPointService.GetRandomLongitude().ToString(),
-            };
-            
-            TrackPoint point8 = new TrackPoint()
-            {
-                Vehicle = vehicle6,
-                TrackTime = GetFutureTripTime(8),
-                Latitude = TrackPointService.GetRandomLatitude().ToString(),
-                Longitude = TrackPointService.GetRandomLongitude().ToString(),
-            };
-            
-            TrackPoint point9 = new TrackPoint()
-            {
-                Vehicle = vehicle6,
-                TrackTime = GetTripTime(8),
-                Latitude = TrackPointService.GetRandomLatitude().ToString(),
-                Longitude = TrackPointService.GetRandomLongitude().ToString(),
-            };
-            
-            _db.Trips.AddRange(trip1, trip2, trip3, trip4, trip5);
-            _db.TrackPoints.AddRange(point1, point2, point3, point4, point5, point6, point7, point8, point9);
+            db.Trips.AddRange(trip1, trip2, trip3, trip4, trip5);
 
-            _db.SaveChanges();
+            db.SaveChanges();
             
             // // Автомобиль и водитель могут принадлежать только одному предприятию.
             // enterprise2.Vehicles.Add(vehicle1);
@@ -380,10 +314,44 @@ namespace AutoPark.Svc.Infrastructure.TestData
             // _db.SaveChanges();
         }
 
+        private static List<TrackPoint> GetTrackPointsForTrip(Trip trip, Entities.Vehicle vehicle, int numberOfPoints = 5)
+        {
+            var points = new List<TrackPoint>();
+
+            if (trip.EndTime is null)
+            {
+                Random rnd = new Random();
+                for (int i = 0; i < numberOfPoints; i++)
+                {
+                    points.Add(new TrackPoint()
+                    {
+                        Vehicle = vehicle,
+                        TrackTime = GetTripTime(rnd.Next(0, 100), rnd.Next(0,23), rnd.Next(0,59)),
+                        Latitude = TrackPointService.GetRandomLatitude().ToString(CultureInfo.InvariantCulture),
+                        Longitude = TrackPointService.GetRandomLongitude().ToString(CultureInfo.InvariantCulture),
+                    });
+                }
+
+                return points;
+            }
+
+            for (int i = 0; i < numberOfPoints; i++)
+            {
+                points.Add(new TrackPoint()
+                {
+                    Vehicle = vehicle,
+                    TrackTime = GetRandomDateTimeOffsetBetween(trip.StartTime, trip.EndTime.Value),
+                    Latitude = TrackPointService.GetRandomLatitude().ToString(CultureInfo.InvariantCulture),
+                    Longitude = TrackPointService.GetRandomLongitude().ToString(CultureInfo.InvariantCulture),
+                });
+            }
+
+            return points;
+        }
+
         private static DateTimeOffset GetOrderTime(int days, int hours, int minutes)
         {
             return DateTimeOffset.Now;
-            return DateTimeOffset.Now - TimeSpan.FromDays(days)- TimeSpan.FromHours(hours) - TimeSpan.FromMinutes(minutes);
         }
         
         private static DateTimeOffset GetTripTime(int? days = null, int? hours = null, int? minutes = null)
@@ -394,6 +362,20 @@ namespace AutoPark.Svc.Infrastructure.TestData
         private static DateTimeOffset GetFutureTripTime(int? days = null, int? hours = null, int? minutes = null)
         {
             return DateTimeOffset.Now + TimeSpan.FromDays(days??0) + TimeSpan.FromHours(hours??0) + TimeSpan.FromMinutes(minutes??0);
+        }
+        
+        private static DateTimeOffset GetRandomDateTimeOffsetBetween(DateTimeOffset start, DateTimeOffset end)
+        {
+            // Get the time difference between start and end
+            TimeSpan difference = end - start;
+
+            // Generate a random number of ticks within the range of ticks between start and end
+            long randomTicks = (long)(new Random().NextDouble() * difference.Ticks);
+
+            // Add the random number of ticks to start
+            DateTimeOffset randomDateTimeOffset = start + TimeSpan.FromTicks(randomTicks);
+
+            return randomDateTimeOffset;
         }
     }
     

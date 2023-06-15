@@ -60,6 +60,6 @@ namespace AutoPark.Svc.Infrastructure.Entities
 
         public List<TrackPoint> TrackPoints { get; set; } = new();
 
-        public List<Trip> Trips { get; set; }
+        public List<Trip> Trips { get; set; } = new();
     }
 }

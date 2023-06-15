@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using BaseTypes;
 
 namespace AutoPark.Svc.Infrastructure.Entities
@@ -12,5 +13,7 @@ namespace AutoPark.Svc.Infrastructure.Entities
         public DateTimeOffset StartTime { get; set; }
 
         public DateTimeOffset? EndTime { get; set; }
+
+        public List<TrackPoint> Points { get; set; } = new();
     }
 }
