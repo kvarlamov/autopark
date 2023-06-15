@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using AutoPark.Svc.Infrastructure.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -10,6 +11,33 @@ namespace AutoPark.Svc.Infrastructure.TestData
 {
     public sealed class VehicleInitializer
     {
+        private static int _currentPointer = 0;
+        private static List<(double, double)> _coordinates = new List<(double, double)>
+        {
+            (51.5074, -0.1278),   // London, United Kingdom
+            (48.8566, 2.3522),    // Paris, France
+            (41.9028, 12.4964),   // Rome, Italy
+            (52.5200, 13.4050),   // Berlin, Germany
+            (55.6761, 12.5683),   // Copenhagen, Denmark
+            (59.3293, 18.0686),   // Stockholm, Sweden
+            (52.3702, 4.8952),    // Amsterdam, Netherlands
+            (53.3498, -6.2603),   // Dublin, Ireland
+            (38.7223, -9.1393),   // Lisbon, Portugal
+            (41.3851, 2.1734),    // Barcelona, Spain
+            (48.2082, 16.3738),   // Vienna, Austria
+            (50.0755, 14.4378),   // Prague, Czech Republic
+            (47.4979, 19.0402),   // Budapest, Hungary
+            (52.2297, 21.0122),   // Warsaw, Poland
+            (59.9343, 30.3351),   // Saint Petersburg, Russia
+            (60.1699, 24.9384),   // Helsinki, Finland
+            (59.4369, 24.7536),   // Tallinn, Estonia
+            (56.9496, 24.1052),   // Riga, Latvia
+            (54.6872, 25.2797),   // Vilnius, Lithuania
+            (41.0082, 28.9784),   // Istanbul, Turkey
+            (38.7223, -9.1393),   // Lisbon, Portugal
+            (53.9045, 27.5615)    // Minsk, Belarus
+        };
+        
         public static void Initialize(VehicleContext db, UserManager<Manager> userManager, RoleManager<IdentityRole<long>> roleManager)
         {
             DatabaseFacade database = db.Database;
@@ -323,28 +351,44 @@ namespace AutoPark.Svc.Infrastructure.TestData
                 Random rnd = new Random();
                 for (int i = 0; i < numberOfPoints; i++)
                 {
+                    if (_currentPointer > _coordinates.Count - 1)
+                        _currentPointer = 0;
+                    
                     points.Add(new TrackPoint()
                     {
                         Vehicle = vehicle,
                         TrackTime = GetTripTime(rnd.Next(0, 100), rnd.Next(0,23), rnd.Next(0,59)),
-                        Latitude = TrackPointService.GetRandomLatitude().ToString(CultureInfo.InvariantCulture),
-                        Longitude = TrackPointService.GetRandomLongitude().ToString(CultureInfo.InvariantCulture),
+                        Latitude = _coordinates[_currentPointer].Item1.ToString(CultureInfo.InvariantCulture),
+                        Longitude = _coordinates[_currentPointer].Item2.ToString(CultureInfo.InvariantCulture),
                     });
+                    _currentPointer++;
                 }
+
+                points = points.OrderBy(x => x.TrackTime).ToList();
+                points.First().TrackTime = trip.StartTime;
 
                 return points;
             }
 
             for (int i = 0; i < numberOfPoints; i++)
             {
+                if (_currentPointer > _coordinates.Count - 1)
+                    _currentPointer = 0;
+                
                 points.Add(new TrackPoint()
                 {
                     Vehicle = vehicle,
                     TrackTime = GetRandomDateTimeOffsetBetween(trip.StartTime, trip.EndTime.Value),
-                    Latitude = TrackPointService.GetRandomLatitude().ToString(CultureInfo.InvariantCulture),
-                    Longitude = TrackPointService.GetRandomLongitude().ToString(CultureInfo.InvariantCulture),
+                    Latitude = _coordinates[_currentPointer].Item1.ToString(CultureInfo.InvariantCulture),
+                    Longitude = _coordinates[_currentPointer].Item2.ToString(CultureInfo.InvariantCulture),
                 });
+                _currentPointer++;
             }
+            
+            points = points.OrderBy(x => x.TrackTime).ToList();
+            points.First().TrackTime = trip.StartTime;
+            points.Last().TrackTime = trip.EndTime.Value;
+
 
             return points;
         }

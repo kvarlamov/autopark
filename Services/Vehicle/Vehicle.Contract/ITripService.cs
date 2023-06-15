@@ -6,6 +6,8 @@ namespace Vehicle.Contract
 {
     public interface ITripService
     {
+        public Task<List<TripDto>> GetTrips(TripRequestDto request);
+
         public Task<List<TrackPointDto>> GetTripsTrackPointsAsync(TripRequestDto request);
     }
 }

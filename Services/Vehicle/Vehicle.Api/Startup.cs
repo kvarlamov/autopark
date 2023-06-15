@@ -68,6 +68,8 @@ namespace AutoPark.Api
             });
 
             services.AddVehicleDependencies(Configuration);
+
+            services.AddHttpClient();
             
             services
                 .AddAuthentication()
