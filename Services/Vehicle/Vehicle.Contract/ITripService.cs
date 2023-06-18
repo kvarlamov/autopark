@@ -8,6 +8,8 @@ namespace Vehicle.Contract
     {
         public Task<List<TripDto>> GetTrips(TripRequestDto request);
 
+        public Task<List<TrackPointDto>> GetTripPoints(TripRequestDto request);
+
         public Task<List<TrackPointDto>> GetTripsTrackPointsAsync(TripRequestDto request);
     }
 }

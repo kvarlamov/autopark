@@ -28,7 +28,10 @@ namespace AutoPark.Svc
 
         public async Task<List<TripDto>> GetTrips(TripRequestDto request)
         {
-            var (vehicleId, startTime, endTime) = request;
+            var (vehicleId, startTime, endTime, _) = request;
+            
+            if (startTime is null)
+                startTime = DateTimeOffset.MinValue;
 
             var query = _db.Trips
                 .AsNoTracking()
@@ -58,7 +61,7 @@ namespace AutoPark.Svc
                         Time = startPoint.TrackTime,
                         DisplayName = startPointPlace.DisplayName
                     };
-                    Thread.Sleep(10);
+                    Thread.Sleep(1000);
                 }
                 
                 if (endPoint != null)
@@ -73,7 +76,7 @@ namespace AutoPark.Svc
                             Time = endPoint.TrackTime,
                             DisplayName = endPointPlace.DisplayName
                         };
-                        Thread.Sleep(10);
+                        Thread.Sleep(1000);
                     }
                 }
                 
@@ -83,9 +86,31 @@ namespace AutoPark.Svc
             return result;
         }
 
+        public async Task<List<TrackPointDto>> GetTripPoints(TripRequestDto request)
+        {
+            var (vehicleId, startTime, endTime, tripId) = request;
+
+            var tripsTrackPoints = await _db.TrackPoints
+                .AsNoTracking()    
+                .Where(x => x.VehicleId == vehicleId && x.TripId == tripId)
+                .Distinct()
+                .OrderBy(x => x.TrackTime)
+                .Include(x => x.Vehicle)
+                .ThenInclude(x => x.Enterprise)
+                .ToListAsync();
+
+            var trackPoints = new List<TrackPointDto>();
+            foreach (var trackPoint in tripsTrackPoints)
+            {
+                trackPoints.Add(TrackPointService.MapEntityToDto(trackPoint));
+            }
+
+            return trackPoints;
+        }
+
         public async Task<List<TrackPointDto>> GetTripsTrackPointsAsync(TripRequestDto request)
         {
-            var (vehicleId, startTime, endTime) = request;
+            var (vehicleId, startTime, endTime, tripId) = request;
             startTime ??= DateTimeOffset.MinValue;
             endTime ??= DateTimeOffset.MaxValue;
 
@@ -94,6 +119,7 @@ namespace AutoPark.Svc
                 .Where(x => x.VehicleId == vehicleId && (x.StartTime >= startTime && x.EndTime <= endTime))
                 .Include(x => x.Points)
                 .SelectMany(x => x.Points)
+                .Where(x => x.TripId == tripId.Value)
                 .Distinct()
                 .OrderBy(x => x.TrackTime)
                 .Where(x => x.TrackTime >= startTime && x.TrackTime <= endTime)
@@ -113,6 +139,7 @@ namespace AutoPark.Svc
         public TripDto MapTripEntityToDto(Trip trip) =>
             new TripDto()
             {
+                Id = trip.Id,
                 VehicleId = trip.VehicleId
             };
 

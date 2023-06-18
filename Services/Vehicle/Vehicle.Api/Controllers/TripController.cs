@@ -15,11 +15,14 @@ namespace AutoPark.Api.Controllers
             _tripService = tripService;
         }
 
-
         [HttpGet("GetTrips")]
         public async Task<List<TripDto>> GetTrips([FromQuery]TripRequestDto request) =>
             await _tripService.GetTrips(request);
-        
+
+        [HttpGet("GetTripById")]
+        public async Task<List<TrackPointDto>> GetTripPoints([FromQuery] TripRequestDto request) => 
+            await _tripService.GetTripPoints(request);
+
 
         [HttpGet("GetTripPoints")]
         public async Task <List<TrackPointDto>> GetTripsTrackPointsAsync([FromQuery]TripRequestDto request) => 

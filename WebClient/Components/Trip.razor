@@ -1,0 +1,58 @@
+﻿@page "/trip/{enterpriseId:long}/{vehicleid:long}/{id:long}"
+@using System.Text
+@using Microsoft.Extensions.Primitives
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JsRuntime
+
+<h3>Trip</h3>
+
+@if (string.IsNullOrEmpty(mapSource))
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <div class="map-container">
+        <iframe src="@mapSource" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public long Id { get; set; }
+    
+    [Parameter]
+    public long EnterpriseId { get; set; }
+
+    [Parameter]
+    public long VehicleId { get; set; }
+    
+    public IReadOnlyList<TrackPointDto> Points { get; set; }
+    
+    private string mapSource;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        mapSource = string.Empty;
+        Points = await Http.GetFromJsonAsync<List<TrackPointDto>>($"GetTripById?vehicleId={VehicleId}&tripId={Id}");
+        var startPointCoord = $"{Points.First().Latitude},{Points.First().Longitude}";
+        var endPointCoord = $"{Points.Last().Latitude},{Points.Last().Longitude}";
+        StringBuilder sb = new StringBuilder();
+        sb.Append("https://static-maps.yandex.ru/1.x/?l=map&pl=");
+        foreach (var point in Points)
+        {
+            sb.Append($"{point.Latitude},{point.Longitude},");
+        }
+        sb.Remove(sb.Length - 1,1);
+        sb.Append("&pt=");
+        sb.Append($"{startPointCoord},pm2am~");
+        sb.Append($"{endPointCoord},pm2bm");
+        sb.Append("&size=650,450");
+
+        mapSource = sb.ToString();
+        // https://static-maps.yandex.ru/1.x/?l=map&pl=59.3293,18.0686,52.3702,4.8952,48.2082,16.3738,53.3498,-6.2603&&pt=59.3293,18.0686,pm2am~53.3498,-6.2603,pm2bm
+    }
+}

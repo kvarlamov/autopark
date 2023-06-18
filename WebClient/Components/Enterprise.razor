@@ -70,7 +70,8 @@ else
     
     private void NavigateToVehicle(long? vehicleId)
     {
-        NavigationManager.NavigateTo($"/vehicle/{vehicleId}/{enterprise.Id}");
+        // NavigationManager.NavigateTo($"/vehicle/{vehicleId}/{enterprise.Id}");
+        NavigationManager.NavigateTo($"/vehicledetails/{enterprise.Id}/{vehicleId}");
     }
 
     private async Task Remove(long vehicleId)

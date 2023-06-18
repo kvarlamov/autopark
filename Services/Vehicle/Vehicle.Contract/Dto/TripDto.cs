@@ -5,6 +5,8 @@ namespace Vehicle.Contract.Dto
 {
     public class TripDto
     {
+        public long Id { get; set; }
+        
         public long VehicleId { get; set; }
 
         public PointInfo StartPlace { get; set; }

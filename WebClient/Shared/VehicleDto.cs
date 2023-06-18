@@ -44,8 +44,10 @@ namespace WebClient.Shared
         public long? ActiveDriver { get; set; }
         
         public DateTimeOffset OrderTime { get; set; }
+        
+        public List<long> Trips { get; set; }
     }
-    
+
     public enum Transmission
     {
         Manual = 1,

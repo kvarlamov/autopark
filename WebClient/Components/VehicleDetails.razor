@@ -1,0 +1,91 @@
+﻿@page "/vehicledetails/{enterpriseId:long}/{id:long}"
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JsRuntime
+
+<p>Manufacture Year: @vehicle.ManufactureYear</p>
+<p>Cost: @vehicle.Cost</p>
+<p>Color: @vehicle.Color</p>
+<p>Brand: @vehicle.BrandName</p>
+<p>Mileage: @vehicle.Mileage</p>
+<p>Order Date: @vehicle.OrderTime</p>
+<br/>
+<table class="table">
+    <thead>
+    <tr>
+        <th>Наименование поездки</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var trip in trips)
+    {
+        <tr @key="@trip.Id" @onclick="() => NavigateToTrip(trip.Id)">
+            <td>@trip.StartPlace.DisplayName</td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<p>
+        Start Time:<br/>
+        <input id="starttime" type="text" value="@startTimeValue" @oninput="e => startTimeValue = e.Value.ToString()" />
+</p>
+<p>
+        End Time:<br/>
+        <input id="endtime" type="text" value="@endTimeValue" @oninput="e => endTimeValue = e.Value.ToString()" />
+</p>
+<div>
+    <button @onclick="() => SearchNew()" @onclick:stopPropagation="true">Search</button>
+</div>
+
+ 
+@code {
+    [Parameter]
+    public long? Id { get; set; }
+    
+    [Parameter]
+    public long? EnterpriseId { get; set; }
+    
+    VehicleDto vehicle = new();
+
+    List<TripDto> trips { get; set; } = new();
+    
+    private string? startTimeValue;
+    private string? endTimeValue;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id != 0)
+        {
+            vehicle = await Http.GetFromJsonAsync<VehicleDto>("vehicle/" + Id);            
+        }
+
+        if (EnterpriseId.HasValue)
+            vehicle.Enterprise = EnterpriseId.Value;
+
+        SearchNew();
+    }
+
+    private void NavigateToTrip(long? tripId)
+    {
+        NavigationManager.NavigateTo($"/trip/{EnterpriseId.Value}/{vehicle.Id}/{tripId}");
+    }
+
+    private async Task SearchNew()
+    {
+        Console.WriteLine(startTimeValue);
+        Console.WriteLine(endTimeValue);
+        if (!string.IsNullOrEmpty(startTimeValue) && !string.IsNullOrEmpty(endTimeValue))
+        {
+            // Make the HTTP request with the selected start time and end time parameters
+            string url = $"GetTrips?vehicleId={Id}&startTime={startTimeValue}&endTime={endTimeValue}";
+            trips = await Http.GetFromJsonAsync<List<TripDto>>(url);
+        }
+        else
+        {
+            // Make the HTTP request without start time and end time parameters
+            trips = await Http.GetFromJsonAsync<List<TripDto>>($"GetTrips?vehicleId={Id}");
+        }
+    }
+}
