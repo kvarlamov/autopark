@@ -30,8 +30,7 @@ namespace AutoPark.Svc
         {
             var (vehicleId, startTime, endTime, _) = request;
             
-            if (startTime is null)
-                startTime = DateTimeOffset.MinValue;
+            startTime ??= DateTimeOffset.MinValue;
 
             var query = _db.Trips
                 .AsNoTracking()
@@ -46,9 +45,9 @@ namespace AutoPark.Svc
             foreach (var trip in trips)
             {
                 var tripDto = MapTripEntityToDto(trip);
-                var startPoint = trip.Points.FirstOrDefault(x => x.TrackTime == trip.StartTime);
+                var startPoint = trip.Points.OrderBy(x => x.TrackTime).FirstOrDefault();
                 var endPoint = trip.EndTime != null 
-                    ? trip.Points.FirstOrDefault(x => x.TrackTime == trip.EndTime) 
+                    ? trip.Points.OrderByDescending(x => x.TrackTime).FirstOrDefault() 
                     : null;
 
                 var responseStart = await _client.GetAsync(GetQueryString(startPoint!.Latitude, startPoint.Longitude));
@@ -134,6 +133,40 @@ namespace AutoPark.Svc
             }
 
             return trackPoints;
+        }
+
+        public async Task AddTrackPointToTrip(TrackPointDto newPoint, decimal avSpeed, decimal distance)
+        {
+            var query = _db.Trips.Where(x => x.VehicleId == newPoint.VehicleId);
+            Trip currentTrip =  await query.FirstOrDefaultAsync();
+
+            if (currentTrip is null)
+            {
+                // create new trip
+                currentTrip = new Trip()
+                {
+                    VehicleId = newPoint.VehicleId,
+                    StartTime = DateTimeOffset.Now,
+                    Distance = distance,
+                    AverageSpeed = avSpeed
+                };
+                _db.Trips.Add(currentTrip);
+                await _db.SaveChangesAsync();
+            }
+
+            if (currentTrip.Points is not {Count: > 0}) 
+                currentTrip.Points = new List<TrackPoint>();
+
+            currentTrip.Points.Add(new TrackPoint()
+            {
+                VehicleId = newPoint.VehicleId,
+                TrackTime = newPoint.TrackTime,
+                TripId = currentTrip.Id,
+                Latitude = newPoint.Latitude,
+                Longitude = newPoint.Longitude
+            });
+
+            await _db.SaveChangesAsync();
         }
 
         public TripDto MapTripEntityToDto(Trip trip) =>

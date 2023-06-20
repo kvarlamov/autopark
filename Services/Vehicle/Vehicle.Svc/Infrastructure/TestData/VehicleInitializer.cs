@@ -284,48 +284,48 @@ namespace AutoPark.Svc.Infrastructure.TestData
             
             db.Enterprises.AddRange(enterprise1, enterprise2, enterprise3, enterprise4, enterprise5, enterprise6);
 
-            Trip trip1 = new Trip()
-            {
-                Vehicle = vehicle6,
-                StartTime = GetTripTime(30),
-                EndTime = null
-            };
-
-            Trip trip2 = new Trip()
-            {
-                Vehicle = vehicle6,
-                StartTime = GetTripTime(29, 5),
-                EndTime = GetTripTime(19, 4)
-            };
-            
-            Trip trip3 = new Trip()
-            {
-                Vehicle = vehicle6,
-                StartTime = GetTripTime(20, 1, 5),
-                EndTime = GetTripTime(10, 5, 1)
-            };
-            
-            Trip trip4 = new Trip()
-            {
-                Vehicle = vehicle6,
-                StartTime = GetTripTime(10, 1, 5),
-                EndTime = null,
-            };
-            
-            Trip trip5 = new Trip()
-            {
-                Vehicle = vehicle6,
-                StartTime = GetTripTime(1, 1, 5),
-                EndTime = GetTripTime(0, 5, 7),
-            };
-            
-            trip1.Points.AddRange(GetTrackPointsForTrip(trip1, vehicle6));
-            trip2.Points.AddRange(GetTrackPointsForTrip(trip2, vehicle6, 3));
-            trip3.Points.AddRange(GetTrackPointsForTrip(trip3, vehicle6, 4));
-            trip4.Points.AddRange(GetTrackPointsForTrip(trip4, vehicle6));
-            trip5.Points.AddRange(GetTrackPointsForTrip(trip5, vehicle6));
-            
-            db.Trips.AddRange(trip1, trip2, trip3, trip4, trip5);
+            // Trip trip1 = new Trip()
+            // {
+            //     Vehicle = vehicle6,
+            //     StartTime = GetTripTime(30),
+            //     EndTime = null
+            // };
+            //
+            // Trip trip2 = new Trip()
+            // {
+            //     Vehicle = vehicle6,
+            //     StartTime = GetTripTime(29, 5),
+            //     EndTime = GetTripTime(19, 4)
+            // };
+            //
+            // Trip trip3 = new Trip()
+            // {
+            //     Vehicle = vehicle6,
+            //     StartTime = GetTripTime(20, 1, 5),
+            //     EndTime = GetTripTime(10, 5, 1)
+            // };
+            //
+            // Trip trip4 = new Trip()
+            // {
+            //     Vehicle = vehicle6,
+            //     StartTime = GetTripTime(10, 1, 5),
+            //     EndTime = null,
+            // };
+            //
+            // Trip trip5 = new Trip()
+            // {
+            //     Vehicle = vehicle6,
+            //     StartTime = GetTripTime(1, 1, 5),
+            //     EndTime = GetTripTime(0, 5, 7),
+            // };
+            //
+            // trip1.Points.AddRange(GetTrackPointsForTrip(trip1, vehicle6));
+            // trip2.Points.AddRange(GetTrackPointsForTrip(trip2, vehicle6, 3));
+            // trip3.Points.AddRange(GetTrackPointsForTrip(trip3, vehicle6, 4));
+            // trip4.Points.AddRange(GetTrackPointsForTrip(trip4, vehicle6));
+            // trip5.Points.AddRange(GetTrackPointsForTrip(trip5, vehicle6));
+            //
+            // db.Trips.AddRange(trip1, trip2, trip3, trip4, trip5);
 
             db.SaveChanges();
             

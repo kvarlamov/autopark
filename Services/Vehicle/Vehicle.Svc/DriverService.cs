@@ -63,7 +63,7 @@ namespace AutoPark.Svc
                 .AsNoTracking()
                 .ToListAsync();
             
-            //todo - add automapper
+            // todo - add automapper
             var vehicleDtos = new List<DriverDto>();
 
             foreach (var driver in drivers)

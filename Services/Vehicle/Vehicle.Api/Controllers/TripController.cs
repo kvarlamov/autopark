@@ -27,5 +27,10 @@ namespace AutoPark.Api.Controllers
         [HttpGet("GetTripPoints")]
         public async Task <List<TrackPointDto>> GetTripsTrackPointsAsync([FromQuery]TripRequestDto request) => 
             await _tripService.GetTripsTrackPointsAsync(request);
+
+        public Task AddTrackPointToTrip(TrackPointDto newPoint, decimal avSpeed, decimal distance)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

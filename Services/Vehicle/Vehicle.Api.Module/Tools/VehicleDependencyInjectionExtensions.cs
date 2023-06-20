@@ -20,7 +20,7 @@ namespace Vehicle.Api.Module.Tools
                 {
                     builder.AddConsole();
                 })).EnableSensitiveDataLogging();
-            });
+            }, ServiceLifetime.Singleton, ServiceLifetime.Singleton);
 
             // Add Services
             services.AddScoped<IVehicleService, VehicleService>();
@@ -29,7 +29,10 @@ namespace Vehicle.Api.Module.Tools
             services.AddScoped<IManagerService, ManagerService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<ITrackPointService, TrackPointService>();
-            services.AddScoped<ITripService, TripService>();
+            services.AddTransient<ITripService, TripService>();
+            services.AddTransient<ITrackGeneratorHelper, TrackGeneratorHelper>();
+            
+            services.AddHostedService<TrackGeneratorHostedService>();
         }
     }
 }

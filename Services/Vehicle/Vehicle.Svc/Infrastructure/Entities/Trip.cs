@@ -15,5 +15,9 @@ namespace AutoPark.Svc.Infrastructure.Entities
         public DateTimeOffset? EndTime { get; set; }
 
         public List<TrackPoint> Points { get; set; } = new();
+        
+        public decimal AverageSpeed { get; set; }
+
+        public decimal Distance { get; set; }
     }
 }
