@@ -21,10 +21,10 @@ namespace AutoPark.Svc
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                if (!_isStart)
-                    await _generator.GenerateTrack();
-                else
-                    _isStart = false;
+                // if (!_isStart)
+                //     await _generator.GenerateTrack();
+                // else
+                //     _isStart = false;
 
                 await Task.Delay(_delay, stoppingToken);
             }
