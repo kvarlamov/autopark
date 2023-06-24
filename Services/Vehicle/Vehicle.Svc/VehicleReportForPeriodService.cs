@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoPark.Svc.Infrastructure;
-using AutoPark.Svc.Infrastructure.Entities;
-using Microsoft.EntityFrameworkCore;
 using Vehicle.Contract;
 using Vehicle.Contract.Dto;
 using Vehicle.Contract.Enums;
@@ -25,12 +23,13 @@ namespace AutoPark.Svc
         public async Task<VehicleReportForPeriodResponseDto> GetReport(VehicleReportForPeriodRequestDto dto)
         {
             // get all points with time
-            var points = await _tripService.GetTripPoints(new TripRequestDto(dto.VehicleId, dto.StartTime, dto.EndTime));
+            var points = await _tripService.GetTripPointsForReport(new TripRequestDto(dto.VehicleId, dto.StartTime, dto.EndTime));
 
             var res = CalculateResult(dto.Interval, points);
 
             res.VehicleId = dto.VehicleId;
             res.ReportType = dto.ReportType;
+            res.Name = "VehicleReport";
 
             return res;
         }
@@ -63,17 +62,18 @@ namespace AutoPark.Svc
             if (points.Count < 2)
                 return result;
 
-            IEnumerable<IGrouping<int, TrackPointDto>> yearGpoup = points.GroupBy(x => x.TrackTime.Year);
-            foreach (IGrouping<int, TrackPointDto> yearPoints in yearGpoup)
+            var yearGpoup = points.GroupBy(p => p.TrackTime.Year.ToString())
+                .ToDictionary(g => g.Key, g => g.ToList());
+            foreach (var yearPoints in yearGpoup)
             {
                 bool isFirst = true;
-                if (yearPoints.Count() < 2)
+                if (yearPoints.Value.Count < 2)
                     continue;
 
                 double distance = 0;
                 bool isFirstPoint = true;
                 TrackPointDto previousPoint = null;
-                foreach (TrackPointDto yearPoint in yearPoints)
+                foreach (TrackPointDto yearPoint in yearPoints.Value)
                 {
                     if (isFirst)
                     {
@@ -86,7 +86,7 @@ namespace AutoPark.Svc
                     previousPoint = yearPoint;
                 }
                 
-                result.Add($"Year: {yearPoints.Key} - {distance} km");
+                result.Add($"Year: {yearPoints.Key} - {distance*1000} km");
             }
 
             return result;
@@ -98,17 +98,18 @@ namespace AutoPark.Svc
             if (points.Count < 2)
                 return result;
 
-            IEnumerable<IGrouping<int, TrackPointDto>> monthGroup = points.GroupBy(x => x.TrackTime.Month);
-            foreach (IGrouping<int, TrackPointDto> monthPoints in monthGroup)
+            Dictionary<string, List<TrackPointDto>> monthGroup = points.GroupBy(p => p.TrackTime.ToString("yyyy-MM"))
+                .ToDictionary(g => g.Key, g => g.ToList());
+            Console.WriteLine(monthGroup.Count());
+            foreach (var monthPoints in monthGroup)
             {
                 bool isFirst = true;
-                if (monthPoints.Count() < 2)
+                if (monthPoints.Value.Count < 2)
                     continue;
 
                 double distance = 0;
-                bool isFirstPoint = true;
                 TrackPointDto previousPoint = null;
-                foreach (var monthPoint in monthPoints)
+                foreach (var monthPoint in monthPoints.Value)
                 {
                     if (isFirst)
                     {
@@ -121,7 +122,7 @@ namespace AutoPark.Svc
                     previousPoint = monthPoint;
                 }
                 
-                result.Add($"Month: {monthPoints.Key} - {distance} km");
+                result.Add($"{monthPoints.Key} - {distance*1000} km");
             }
 
             return result;
@@ -133,17 +134,18 @@ namespace AutoPark.Svc
             if (points.Count < 2)
                 return result;
 
-            IEnumerable<IGrouping<int, TrackPointDto>> dayGroup = points.GroupBy(x => x.TrackTime.Day);
-            foreach (IGrouping<int, TrackPointDto> dayPoints in dayGroup)
+            Dictionary<string, List<TrackPointDto>> dayGroup = points.GroupBy(p => p.TrackTime.ToString("yyyy-MM-dd"))
+                .ToDictionary(g => g.Key, g => g.ToList());
+            foreach (var dayPoints in dayGroup)
             {
                 bool isFirst = true;
-                if (dayPoints.Count() < 2)
+                if (dayPoints.Value.Count < 2)
                     continue;
 
                 double distance = 0;
                 bool isFirstPoint = true;
                 TrackPointDto previousPoint = null;
-                foreach (TrackPointDto dayPoint in dayPoints)
+                foreach (TrackPointDto dayPoint in dayPoints.Value)
                 {
                     if (isFirst)
                     {
@@ -156,7 +158,7 @@ namespace AutoPark.Svc
                     previousPoint = dayPoint;
                 }
                 
-                result.Add($"Day: {dayPoints.Key} - {distance} km");
+                result.Add($"{dayPoints.Key} - {distance*1000} km");
             }
 
             return result;

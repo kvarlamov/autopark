@@ -32,5 +32,10 @@ namespace AutoPark.Api.Controllers
         {
             throw new System.NotImplementedException();
         }
+
+        public Task<List<TrackPointDto>> GetTripPointsForReport(TripRequestDto request)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

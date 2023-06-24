@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using Vehicle.Contract.Enums;
 
-namespace Vehicle.Contract.Dto
+namespace WebClient.Shared
 {
     public class VehicleReportForPeriodResponseDto
     {

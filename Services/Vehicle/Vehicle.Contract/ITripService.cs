@@ -12,5 +12,7 @@ namespace Vehicle.Contract
 
         public Task<List<TrackPointDto>> GetTripsTrackPointsAsync(TripRequestDto request);
         Task AddTrackPointToTrip(TrackPointDto newPoint, decimal avSpeed, decimal distance);
+
+        Task<List<TrackPointDto>> GetTripPointsForReport(TripRequestDto request);
     }
 }

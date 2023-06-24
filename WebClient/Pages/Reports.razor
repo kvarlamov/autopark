@@ -1,0 +1,92 @@
+﻿@page "/report"
+@using System.Text
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JsRuntime
+
+<h3>Reports</h3>
+
+@if (report == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <div>
+        <label for="startDate">Start Date:</label>
+        <input type="date" id="startDate" @bind="@startDate" />
+
+        <label for="endDate">End Date:</label>
+        <input type="date" id="endDate" @bind="@endDate" />
+
+        <label for="interval">Interval:</label>
+        <select id="interval" @bind="@selectedInterval">
+            @foreach (var interval in Enum.GetValues(typeof(Interval)))
+            {
+                <option value="@interval">@interval.ToString()</option>
+            }
+        </select>
+        
+        <button @onclick="GenerateReport">Generate Report</button>
+    </div>
+    @if (report != null && report.Result != null && report.Result.Any())
+    {
+        <p>@report.Name</p>
+        <p>@GetReportTypeName(report.ReportType)</p>
+        <table>
+            <thead>
+            <tr>
+                <th>Report</th>
+            </tr>
+            </thead>
+            <tbody>
+        
+            @foreach (var line in report.Result)
+            {
+                <tr>
+                    <td>@line</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+}
+
+@code {
+    private VehicleReportForPeriodResponseDto report = new();
+    private DateTimeOffset startDate;
+    private DateTimeOffset endDate;
+    private Interval selectedInterval;
+
+    protected override async Task OnInitializedAsync()
+    {
+        startDate = DateTime.Today;
+        endDate = DateTime.Today;
+        selectedInterval = Interval.Day;
+    }
+    
+    private string GetReportTypeName(ReportType reportType)
+    {
+        switch (reportType)
+        {
+            case ReportType.VehicleForPeriodReport:
+                return "Vehicle for Period Report";
+            default:
+                return string.Empty;
+        }
+    }
+    
+    private async Task GenerateReport()
+    {
+        // Perform report generation logic based on selected dates and interval
+        // Update the 'reports' list accordingly
+        // Example: 
+        // reports = await YourReportGenerationMethod(startDate, endDate, selectedInterval);
+        Console.WriteLine($"startDate: {startDate.Date}");
+        Console.WriteLine($"endDate: {endDate.Date}");
+        report = await Http.GetFromJsonAsync<VehicleReportForPeriodResponseDto>($"Report?vehicleId={1}&ReportType=1&Interval={(int)selectedInterval}&StartTime={startDate.Date}&EndTime={endDate.Date}");
+        
+    }
+}

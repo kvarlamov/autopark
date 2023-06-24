@@ -85,6 +85,29 @@ namespace AutoPark.Svc
             return result;
         }
 
+        public async Task<List<TrackPointDto>> GetTripPointsForReport(TripRequestDto request)
+        {
+            var (vehicleId, startTime, endTime, _) = request;
+            startTime ??= DateTimeOffset.MinValue;
+            endTime ??= DateTimeOffset.MaxValue;
+
+            var tripsTrackPoints = await _db.TrackPoints
+                .AsNoTracking()    
+                .Where(x => x.VehicleId == vehicleId && (x.TrackTime >= startTime && x.TrackTime <= endTime))
+                .OrderBy(x => x.TrackTime)
+                .Include(x => x.Vehicle)
+                .ThenInclude(x => x.Enterprise)
+                .ToListAsync();
+
+            var trackPoints = new List<TrackPointDto>();
+            foreach (var trackPoint in tripsTrackPoints)
+            {
+                trackPoints.Add(TrackPointService.MapEntityToDto(trackPoint));
+            }
+
+            return trackPoints;
+        }
+
         public async Task<List<TrackPointDto>> GetTripPoints(TripRequestDto request)
         {
             var (vehicleId, startTime, endTime, tripId) = request;

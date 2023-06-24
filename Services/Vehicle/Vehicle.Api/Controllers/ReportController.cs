@@ -6,6 +6,8 @@ using Vehicle.Contract.Dto;
 
 namespace AutoPark.Api.Controllers
 {
+    [ApiController]
+    [Route("[controller]")]
     public class ReportController : ControllerBase
     {
         private readonly IVehicleReportForPeriodService _reportForPeriodService;
@@ -16,7 +18,7 @@ namespace AutoPark.Api.Controllers
         }
         
         [HttpGet]
-        public Task<VehicleReportForPeriodResponseDto> GetReport([FromQuery]VehicleReportForPeriodRequestDto request) => 
-            _reportForPeriodService.GetReport(request);
+        public async Task<VehicleReportForPeriodResponseDto> GetReport([FromQuery]VehicleReportForPeriodRequestDto request) => 
+            await _reportForPeriodService.GetReport(request);
     }
 }

@@ -31,6 +31,7 @@ namespace Vehicle.Api.Module.Tools
             services.AddScoped<ITrackPointService, TrackPointService>();
             services.AddTransient<ITripService, TripService>();
             services.AddTransient<ITrackGeneratorHelper, TrackGeneratorHelper>();
+            services.AddScoped<IVehicleReportForPeriodService, VehicleReportForPeriodService>();
             
             services.AddHostedService<TrackGeneratorHostedService>();
         }
