@@ -86,7 +86,7 @@ namespace AutoPark.Svc
                     previousPoint = yearPoint;
                 }
                 
-                result.Add($"Year: {yearPoints.Key} - {distance*1000} km");
+                result.Add($"Year: {yearPoints.Key} - {Math.Round(distance*1000)} km");
             }
 
             return result;
@@ -122,7 +122,7 @@ namespace AutoPark.Svc
                     previousPoint = monthPoint;
                 }
                 
-                result.Add($"{monthPoints.Key} - {distance*1000} km");
+                result.Add($"{monthPoints.Key} - {Math.Round(distance*1000)} km");
             }
 
             return result;
@@ -158,7 +158,7 @@ namespace AutoPark.Svc
                     previousPoint = dayPoint;
                 }
                 
-                result.Add($"{dayPoints.Key} - {distance*1000} km");
+                result.Add($"{dayPoints.Key} - {Math.Round(distance*1000)} km");
             }
 
             return result;

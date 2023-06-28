@@ -14,6 +14,7 @@ namespace AutoPark.Svc.Infrastructure.TestData
     {
         private static int _currentPointer = 0;
         private static List<(double, double)> _coordinates = new();
+        private const int Step = 5526;
         
         public static void Initialize(VehicleContext db, UserManager<Manager> userManager, RoleManager<IdentityRole<long>> roleManager)
         {
@@ -270,43 +271,52 @@ namespace AutoPark.Svc.Infrastructure.TestData
                 StartTime = DateTimeOffset.Now,
                 EndTime = DateTimeOffset.Now.AddYears(5)
             };
-            //
-            // Trip trip2 = new Trip()
-            // {
-            //     Vehicle = vehicle6,
-            //     StartTime = GetTripTime(29, 5),
-            //     EndTime = GetTripTime(19, 4)
-            // };
-            //
-            // Trip trip3 = new Trip()
-            // {
-            //     Vehicle = vehicle6,
-            //     StartTime = GetTripTime(20, 1, 5),
-            //     EndTime = GetTripTime(10, 5, 1)
-            // };
-            //
-            // Trip trip4 = new Trip()
-            // {
-            //     Vehicle = vehicle6,
-            //     StartTime = GetTripTime(10, 1, 5),
-            //     EndTime = null,
-            // };
-            //
-            // Trip trip5 = new Trip()
-            // {
-            //     Vehicle = vehicle6,
-            //     StartTime = GetTripTime(1, 1, 5),
-            //     EndTime = GetTripTime(0, 5, 7),
-            // };
-            //
-            trip1.Points.AddRange(GetTrackPointsForTrip(trip1, vehicle6));
-            // trip2.Points.AddRange(GetTrackPointsForTrip(trip2, vehicle6, 3));
-            // trip3.Points.AddRange(GetTrackPointsForTrip(trip3, vehicle6, 4));
-            // trip4.Points.AddRange(GetTrackPointsForTrip(trip4, vehicle6));
-            // trip5.Points.AddRange(GetTrackPointsForTrip(trip5, vehicle6));
-            //
-            // db.Trips.AddRange(trip1, trip2, trip3, trip4, trip5);
-            db.Trips.Add(trip1);
+            Trip trip2 = new Trip()
+            {
+                Vehicle = vehicle1,
+                StartTime = DateTimeOffset.Now,
+                EndTime = DateTimeOffset.Now.AddYears(5)
+            };
+            Trip trip3 = new Trip()
+            {
+                Vehicle = vehicle2,
+                StartTime = DateTimeOffset.Now,
+                EndTime = DateTimeOffset.Now.AddYears(5)
+            };
+            Trip trip4 = new Trip()
+            {
+                Vehicle = vehicle3,
+                StartTime = DateTimeOffset.Now,
+                EndTime = DateTimeOffset.Now.AddYears(5)
+            };
+            Trip trip5 = new Trip()
+            {
+                Vehicle = vehicle4,
+                StartTime = DateTimeOffset.Now,
+                EndTime = DateTimeOffset.Now.AddYears(5)
+            };
+            Trip trip6 = new Trip()
+            {
+                Vehicle = vehicle5,
+                StartTime = DateTimeOffset.Now,
+                EndTime = DateTimeOffset.Now.AddYears(5)
+            };
+            Trip trip7 = new Trip()
+            {
+                Vehicle = vehicle7,
+                StartTime = DateTimeOffset.Now,
+                EndTime = DateTimeOffset.Now.AddYears(5)
+            };
+            
+            trip1.Points.AddRange(GetTrackPointsForTrip(trip1));
+            trip2.Points.AddRange(GetTrackPointsForTrip(trip2));
+            trip3.Points.AddRange(GetTrackPointsForTrip(trip3));
+            trip4.Points.AddRange(GetTrackPointsForTrip(trip4));
+            trip5.Points.AddRange(GetTrackPointsForTrip(trip5));
+            trip6.Points.AddRange(GetTrackPointsForTrip(trip6));
+            trip7.Points.AddRange(GetTrackPointsForTrip(trip7));
+            
+            db.Trips.AddRange(new []{trip1, trip2, trip3, trip4, trip5, trip6, trip7});
 
             db.SaveChanges();
             
@@ -323,29 +333,36 @@ namespace AutoPark.Svc.Infrastructure.TestData
             // _db.SaveChanges();
         }
 
-        private static List<TrackPoint> GetTrackPointsForTrip(Trip trip, Entities.Vehicle vehicle)
+        private static List<TrackPoint> GetTrackPointsForTrip(Trip trip)
         {
             var points = new List<TrackPoint>();
 
             bool isFirst = true;
             DateTimeOffset currentTime = trip.StartTime;
-            foreach (var coordinate in _coordinates)
+            int counter = 0;
+            for (var i = _currentPointer; i < _coordinates.Count; i++)
             {
+                _currentPointer = i;
+                counter++;
+                var coordinate = _coordinates[i];
                 Random rnd = new Random();
                 DateTimeOffset trackTime = isFirst
                     ? currentTime
                     : currentTime
                         .AddMinutes(rnd.Next(0, 59));
-                
+
                 points.Add(new TrackPoint()
                 {
-                    Vehicle = vehicle,
+                    Vehicle = trip.Vehicle,
                     TrackTime = trackTime,
                     Latitude = coordinate.Item1.ToString(CultureInfo.InvariantCulture),
                     Longitude = coordinate.Item2.ToString(CultureInfo.InvariantCulture),
                 });
                 isFirst = false;
                 currentTime = trackTime;
+                if (counter >= Step)
+                    break;
+                
             }
 
             return points;

@@ -1,0 +1,38 @@
+version: '3'
+services:
+  #Api
+  vehicle-api:
+    build:
+      context: .
+      dockerfile: Services/Vehicle/Vehicle.Api/Dockerfile
+    container_name: 'vehicle-api'
+    restart: always
+    ports:
+      - "5005:80"
+    environment:
+      - "ConnectionStrings:AutoParkDB=Host=vehicle-db;Database=AutoPark;Username=postgres;Password=12345678"          
+    depends_on: 
+      - vehicle-db
+  #Client
+  webclient:
+    build:
+      context: .
+      dockerfile: WebClient/Dockerfile
+    container_name: 'webclient'
+    restart: always
+    ports:
+      - "5003:80"    
+  #Db
+  vehicle-db:
+    image: "postgres:latest"
+    container_name: 'vehicle-db'
+    restart: always 
+    ports:
+      - 5433:5432
+    environment: 
+      - POSTGRES_PASSWORD=12345678
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 1s
+      retries: 10

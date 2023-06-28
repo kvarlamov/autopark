@@ -15,7 +15,7 @@ namespace WebClient
             builder.RootComponents.Add<App>("#app");
 
             builder.Services.AddSingleton<ApiConfiguration>(sp => new ApiConfiguration()
-                {BaseAddress = "https://localhost:6005"});
+                {BaseAddress = "http://localhost:5005"});
 
             builder.Services.AddScoped(
                 sp =>

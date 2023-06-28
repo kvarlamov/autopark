@@ -3,6 +3,7 @@
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
         <RootNamespace>AutoPark.Api</RootNamespace>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
     <ItemGroup>
@@ -68,6 +69,18 @@
       <_ContentIncludedByDefault Remove="wwwroot\js\bootstrap.js.map" />
       <_ContentIncludedByDefault Remove="wwwroot\js\bootstrap.min.js" />
       <_ContentIncludedByDefault Remove="wwwroot\js\bootstrap.min.js.map" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\..\..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="coordinates.txt">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>
